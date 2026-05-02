@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>ANOMcompany | Red Team Ops</title>
+    <style>
+        /* Ana Renk Paleti */
+        :root {
+            --bg-color: #0d0d0d;      /* Derin Siyah */
+            --terminal-bg: #050505;  /* Daha koyu siyah */
+            --primary-red: #ff0000;   /* Saf Kırmızı */
+            --dark-red: #8b0000;      /* Koyu Kırmızı (Vurgular için) */
+            --text-color: #e0e0e0;    /* Yumuşak Beyaz (Okunabilirlik için) */
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Consolas', 'Courier New', monospace;
+            margin: 40px;
+            line-height: 1.6;
+        }
+
+        /* Başlık Alanı */
+        .header { 
+            border-left: 5px solid var(--primary-red); 
+            padding-left: 20px;
+            margin-bottom: 30px;
+        }
+
+        h1 { 
+            color: var(--primary-red); 
+            letter-spacing: 5px; 
+            text-transform: uppercase;
+            margin: 0;
+        }
+
+        /* Navigasyon Menüsü */
+        .nav { margin-bottom: 30px; display: flex; flex-wrap: wrap; gap: 10px; }
+        
+        .nav a { 
+            color: var(--text-color); 
+            text-decoration: none; 
+            border: 1px solid var(--dark-red); 
+            padding: 8px 15px;
+            transition: 0.3s;
+            background: rgba(139, 0, 0, 0.1);
+        }
+
+        .nav a:hover { 
+            background-color: var(--primary-red); 
+            color: #000; 
+            box-shadow: 0 0 15px var(--primary-red);
+        }
+
+        /* Terminal Alanı */
+        .terminal-box { 
+            background: var(--terminal-bg); 
+            border: 1px solid var(--dark-red); 
+            padding: 20px; 
+            height: 250px; 
+            overflow-y: auto;
+            box-shadow: inset 0 0 10px #000;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 18px;
+            background: var(--primary-red);
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink { 0% {opacity:0} 50% {opacity:1} 100% {opacity:0} }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>ANOMcompany</h1>
+        <p>Security & Tool Development Laboratory</p>
+    </div>
+
+    <div class="nav">
+        <a href="tools.html">PROJECTS</a>
+        <a href="chat.html">ANOM-CHAT</a>
+        <a href="logs.html">LOGS</a>
+        <a href="ctf.html">CTF</a>
+        <a href="shop.html">STORE</a>
+        <a href="paybin.html">PAYBIN</a>
+    </div>
+
+    <div class="terminal-box">
+        <span style="color: var(--primary-red)">[root@ANOMcompany]:~#</span> ./initialize_site.py<br>
+        > Loading kernel modules... <span style="color: var(--primary-red)">[DONE]</span><br>
+        > Establishing encrypted connection... <span style="color: var(--primary-red)">[DONE]</span><br>
+        > Welcome, Admin. System is ready.<br>
+        <span style="color: var(--primary-red)">[root@ANOMcompany]:~#</span> <span class="cursor"></span>
+    </div>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>ANOMcompany | STORE</title>
+    <style>
+        :root { --bg: #0d0d0d; --red: #ff0000; --text: #e0e0e0; }
+        body { background: var(--bg); color: var(--text); font-family: monospace; padding: 20px; }
+        h1 { border-bottom: 2px solid var(--red); padding-bottom: 10px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px; }
+        .product-card { border: 1px solid #333; padding: 15px; background: #050505; text-align: center; transition: 0.3s; }
+        .product-card:hover { border-color: var(--red); box-shadow: 0 0 15px rgba(255,0,0,0.1); }
+        .img-placeholder { width: 100%; height: 150px; background: #1a1a1a; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; border: 1px dashed #444; color: #555; }
+        .price { color: var(--red); font-size: 1.2em; font-weight: bold; margin: 10px 0; }
+        .buy-btn { background: var(--red); color: #000; border: none; padding: 10px; width: 100%; font-weight: bold; cursor: pointer; text-decoration: none; display: block; }
+    </style>
+</head>
+<body>
+    <h1><a href="index.html" style="color:var(--red); text-decoration:none;"><- ANOM-STORE</a></h1>
+    <p>Siber güvenlik meraklıları için özel tasarım sticker koleksiyonu.</p>
+
+    <div class="grid">
+        <div class="product-card">
+            <div class="img-placeholder">[STICKER GÖRSELİ]</div>
+            <h3>ANOM Logo Sticker</h3>
+            <p>Holografik kaplama, suya dayanıklı.</p>
+            <div class="price">45.00 TL</div>
+            <a href="https://t.me/kullaniciadin" class="buy-btn">SATIN AL (TG)</a>
+        </div>
+
+        <div class="product-card">
+            <div class="img-placeholder">[STICKER GÖRSELİ]</div>
+            <h3>Terminal Addict</h3>
+            <p>Mat siyah, laptoplar için özel boyut.</p>
+            <div class="price">35.00 TL</div>
+            <a href="https://t.me/kullaniciadin" class="buy-btn">SATIN AL (TG)</a>
+        </div>
+
+        <div class="product-card">
+            <div class="img-placeholder">[STICKER GÖRSELİ]</div>
+            <h3>Root User Pack</h3>
+            <p>5'li karışık hacking temalı set.</p>
+            <div class="price">120.00 TL</div>
+            <a href="https://t.me/kullaniciadin" class="buy-btn">SATIN AL (TG)</a>
+        </div>
+    </div>
+</body>
+</html>

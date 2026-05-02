@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>ANOM-TOOLS | Repository</title>
+    <style>
+        :root { --bg: #0d0d0d; --red: #ff0000; --text: #e0e0e0; }
+        body { background: var(--bg); color: var(--text); font-family: monospace; padding: 20px; }
+        .tool-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .card { border: 1px solid #333; padding: 20px; background: #050505; transition: 0.3s; }
+        .card:hover { border-color: var(--red); box-shadow: 0 0 15px rgba(255,0,0,0.2); }
+        .tag { color: var(--red); font-size: 0.8em; border: 1px solid var(--red); padding: 2px 5px; margin-right: 5px; }
+        .desc { margin: 15px 0; color: #aaa; }
+        .link { color: #fff; text-decoration: none; border-bottom: 1px solid var(--red); }
+    </style>
+</head>
+<body>
+    <h1><a href="index.html" style="color:var(--red); text-decoration:none;"><- TOOLS REPOSITORY</a></h1>
+    
+    <div class="tool-grid">
+        <div class="card">
+            <span class="tag">TERMUX</span><span class="tag">PYTHON</span>
+            <h3>ANOM-Scanner v1.0</h3>
+            <p class="desc">Otomatik port tarama ve servis tanıma aracı. Hızlı ve sessiz.</p>
+            <a href="#" class="link">View Source Code</a>
+        </div>
+
+        <div class="card">
+            <span class="tag">KALI</span><span class="tag">BASH</span>
+            <h3>Auto-Recon</h3>
+            <p class="desc">Hedef sistem hakkında bilgi toplama (OSINT) işlemlerini hızlandırır.</p>
+            <a href="#" class="link">Coming Soon</a>
+        </div>
+    </div>
+</body>
+</html>
