@@ -2,99 +2,248 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ANOMcompany | Red Team Ops</title>
     <style>
-        /* Ana Renk Paleti */
         :root {
-            --bg-color: #0d0d0d;      /* Derin Siyah */
-            --terminal-bg: #050505;  /* Daha koyu siyah */
-            --primary-red: #ff0000;   /* Saf Kırmızı */
-            --dark-red: #8b0000;      /* Koyu Kırmızı (Vurgular için) */
-            --text-color: #e0e0e0;    /* Yumuşak Beyaz (Okunabilirlik için) */
+            --bg-color: #080808;
+            --primary-red: #ff0000;
+            --dark-red: #660000;
+            --text-color: #e0e0e0;
         }
 
-        body {
+        body, html {
+            margin: 0; padding: 0;
             background-color: var(--bg-color);
             color: var(--text-color);
             font-family: 'Consolas', 'Courier New', monospace;
-            margin: 40px;
-            line-height: 1.6;
+            overflow-x: hidden;
         }
 
-        /* Başlık Alanı */
-        .header { 
-            border-left: 5px solid var(--primary-red); 
+        /* Matrix Arka Plan */
+        #matrix {
+            position: fixed;
+            top: 0; left: 0;
+            z-index: -1;
+            opacity: 0.15;
+        }
+
+        .container { padding: 30px; position: relative; max-width: 1200px; margin: 0 auto; }
+
+        .header {
+            border-left: 5px solid var(--primary-red);
             padding-left: 20px;
             margin-bottom: 30px;
         }
 
-        h1 { 
-            color: var(--primary-red); 
-            letter-spacing: 5px; 
-            text-transform: uppercase;
-            margin: 0;
-        }
+        h1 { color: var(--primary-red); letter-spacing: 5px; text-transform: uppercase; margin: 0; font-size: 2.5em; }
 
-        /* Navigasyon Menüsü */
         .nav { margin-bottom: 30px; display: flex; flex-wrap: wrap; gap: 10px; }
-        
-        .nav a { 
-            color: var(--text-color); 
-            text-decoration: none; 
-            border: 1px solid var(--dark-red); 
-            padding: 8px 15px;
-            transition: 0.3s;
-            background: rgba(139, 0, 0, 0.1);
+        .nav a {
+            color: var(--text-color); text-decoration: none; border: 1px solid var(--dark-red);
+            padding: 8px 15px; background: rgba(139, 0, 0, 0.1); transition: 0.3s;
+            font-size: 0.9em;
         }
-
-        .nav a:hover { 
-            background-color: var(--primary-red); 
-            color: #000; 
-            box-shadow: 0 0 15px var(--primary-red);
-        }
+        .nav a:hover { background: var(--primary-red); color: #000; box-shadow: 0 0 15px var(--primary-red); }
 
         /* Terminal Alanı */
-        .terminal-box { 
-            background: var(--terminal-bg); 
-            border: 1px solid var(--dark-red); 
-            padding: 20px; 
-            height: 250px; 
-            overflow-y: auto;
-            box-shadow: inset 0 0 10px #000;
+        .terminal-box {
+            background: rgba(5, 5, 5, 0.9);
+            border: 1px solid var(--dark-red);
+            padding: 20px;
+            height: 140px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 20px rgba(0,0,0,1);
+            font-size: 0.95em;
         }
 
-        .cursor {
-            display: inline-block;
-            width: 10px;
-            height: 18px;
-            background: var(--primary-red);
-            animation: blink 1s infinite;
+        /* Ana Dashboard Yapısı */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
         }
 
-        @keyframes blink { 0% {opacity:0} 50% {opacity:1} 100% {opacity:0} }
+        .panel {
+            border: 1px solid var(--dark-red);
+            background: rgba(10, 10, 10, 0.85);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            background: var(--dark-red);
+            color: white;
+            padding: 5px 10px;
+            font-size: 0.7em;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* Metrik Barları */
+        .metric-label { font-size: 0.8em; margin-top: 10px; display: block; }
+        .metric-bar { height: 8px; background: #222; margin: 5px 0 15px 0; border-radius: 2px; }
+        .metric-fill {
+            height: 100%; background: var(--primary-red); width: 0%;
+            transition: width 2.5s ease-in-out; box-shadow: 0 0 8px var(--primary-red);
+        }
+
+        .cursor { display: inline-block; width: 8px; height: 17px; background: var(--primary-red); animation: blink 1s infinite; vertical-align: middle; }
+        @keyframes blink { 0%, 100% {opacity:0} 50% {opacity:1} }
+
+        /* Alt Haber Bandı */
+        .ticker {
+            position: fixed; bottom: 0; width: 100%; background: #900; 
+            color: #fff; padding: 7px 0; font-size: 0.8em; overflow: hidden; z-index: 100;
+        }
+        .ticker-wrap { display: inline-block; white-space: nowrap; animation: scroll 35s linear infinite; }
+        @keyframes scroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+
+        @media (max-width: 768px) {
+            .dashboard { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>ANOMcompany</h1>
-        <p>Security & Tool Development Laboratory</p>
+
+    <canvas id="matrix"></canvas>
+
+    <div class="container">
+        <div class="header">
+            <h1>ANOMcompany</h1>
+            <p style="opacity: 0.7;">Security & Tool Development Laboratory</p>
+        </div>
+
+        <div class="nav">
+            <a href="#">PROJECTS</a>
+            <a href="#">ANOM-CHAT</a>
+            <a href="#">LOGS</a>
+            <a href="#">CTF</a>
+            <a href="#">STORE</a>
+            <a href="#">PAYBIN</a>
+        </div>
+
+        <div class="terminal-box">
+            <span style="color: var(--primary-red)">[recai@kali]:~#</span> <span id="typewriter"></span><span class="cursor"></span>
+        </div>
+
+        <div class="dashboard">
+            <div class="panel" style="height: 350px;">
+                <div class="panel-header">LIVE_SIGNAL_ANALYSIS // SIGINT_MODULE</div>
+                <canvas id="spectrogramCanvas"></canvas>
+                <div style="position: absolute; top: 45px; right: 20px; color: var(--primary-red); font-size: 0.65em; text-align: right; pointer-events: none; line-height: 1.5;">
+                    <span style="color: white;">SOURCE:</span> UNKNOWN_UPLINK <br>
+                    <span style="color: white;">DECODING:</span> AES-XTS <br>
+                    <span style="color: white;">BITRATE:</span> 12.4 Gbps
+                </div>
+            </div>
+
+            <div class="panel" style="padding: 20px;">
+                <div class="panel-header" style="margin: -20px -20px 20px -20px;">CORE METRICS</div>
+                
+                <span class="metric-label">CPU THREADS LOAD</span>
+                <div class="metric-bar"><div class="metric-fill" id="cpu-bar"></div></div>
+                
+                <span class="metric-label">MEMORY USAGE</span>
+                <div class="metric-bar"><div class="metric-fill" id="ram-bar"></div></div>
+                
+                <span class="metric-label">NETWORK I/O</span>
+                <div class="metric-bar"><div class="metric-fill" id="net-bar"></div></div>
+
+                <div style="margin-top: 25px; font-size: 0.75em; color: #555; line-height: 1.8;">
+                    <span style="color: var(--primary-red)">></span> VPN_TUNNEL: <span style="color: #0f0">SECURE</span><br>
+                    <span style="color: var(--primary-red)">></span> FIREWALL: <span style="color: #0f0">ACTIVE</span><br>
+                    <span style="color: var(--primary-red)">></span> ANOM_BOTNET: STANDBY
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="nav">
-        <a href="tools.html">PROJECTS</a>
-        <a href="chat.html">ANOM-CHAT</a>
-        <a href="logs.html">LOGS</a>
-        <a href="ctf.html">CTF</a>
-        <a href="shop.html">STORE</a>
-        <a href="paybin.html">PAYBIN</a>
+    <div class="ticker">
+        <div class="ticker-wrap">
+            >>> SİSTEM DURUMU: OPERASYONEL -- TÜM MODÜLLER YÜKLENDİ -- SİNYAL ANALİZİ BAŞLATILDI -- YENİ PROJE YAYINDA: ANOM-X -- LOGLAR TEMİZLENDİ -- BAĞLANTI ŞİFRELİ...
+        </div>
     </div>
 
-    <div class="terminal-box">
-        <span style="color: var(--primary-red)">[root@ANOMcompany]:~#</span> ./initialize_site.py<br>
-        > Loading kernel modules... <span style="color: var(--primary-red)">[DONE]</span><br>
-        > Establishing encrypted connection... <span style="color: var(--primary-red)">[DONE]</span><br>
-        > Welcome, Admin. System is ready.<br>
-        <span style="color: var(--primary-red)">[root@ANOMcompany]:~#</span> <span class="cursor"></span>
-    </div>
+    <script>
+        // 1. Matrix Efekti
+        const mCanvas = document.getElementById('matrix');
+        const mCtx = mCanvas.getContext('2d');
+        function resizeMatrix() {
+            mCanvas.width = window.innerWidth;
+            mCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeMatrix);
+        resizeMatrix();
+
+        const chars = "0123456789ABCDEF@#$%&*";
+        const fontSize = 16;
+        const columns = mCanvas.width / fontSize;
+        const drops = Array(Math.floor(columns)).fill(1);
+
+        function drawMatrix() {
+            mCtx.fillStyle = "rgba(8, 8, 8, 0.08)";
+            mCtx.fillRect(0, 0, mCanvas.width, mCanvas.height);
+            mCtx.fillStyle = "#ff0000";
+            mCtx.font = fontSize + "px monospace";
+            for (let i = 0; i < drops.length; i++) {
+                const text = chars.charAt(Math.floor(Math.random() * chars.length));
+                mCtx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > mCanvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            }
+        }
+
+        // 2. Spectrogram Efekti
+        const sCanvas = document.getElementById('spectrogramCanvas');
+        const sCtx = sCanvas.getContext('2d');
+        let sW, sH;
+
+        function resizeSpec() {
+            const parent = sCanvas.parentElement;
+            sW = sCanvas.width = parent.offsetWidth;
+            sH = sCanvas.height = parent.offsetHeight;
+        }
+        window.addEventListener('resize', resizeSpec);
+        resizeSpec();
+
+        function drawSpectrogram() {
+            const imgData = sCtx.getImageData(0, 2, sW, sH - 2);
+            sCtx.putImageData(imgData, 0, 0);
+            const y = sH - 2;
+            for (let x = 0; x < sW; x += 3) {
+                let intensity = Math.sin(x * 0.03 + Date.now() * 0.005) * 50 + 100;
+                intensity += Math.random() * 60;
+                sCtx.fillStyle = `rgb(${intensity}, 0, 0)`;
+                sCtx.fillRect(x, y, 3, 2);
+            }
+            requestAnimationFrame(drawSpectrogram);
+        }
+
+        // 3. Terminal Yazı Efekti
+        const termText = "./initialize_lab.py\n> Mounting core systems... [OK]\n> Encrypting terminal session... [OK]\n> ANOM-X Laboratory is now ONLINE.\n> Welcome, Recai.";
+        let idx = 0;
+        function typeWriter() {
+            if (idx < termText.length) {
+                document.getElementById("typewriter").innerHTML += termText.charAt(idx) === '\n' ? '<br>' : termText.charAt(idx);
+                idx++;
+                setTimeout(typeWriter, 40);
+            } else {
+                // Metrik barlarını doldur
+                setTimeout(() => {
+                    document.getElementById('cpu-bar').style.width = "68%";
+                    document.getElementById('ram-bar').style.width = "42%";
+                    document.getElementById('net-bar').style.width = "91%";
+                }, 500);
+            }
+        }
+
+        // Başlat
+        window.onload = () => {
+            setInterval(drawMatrix, 50);
+            drawSpectrogram();
+            setTimeout(typeWriter, 800);
+        };
+    </script>
 </body>
 </html>
