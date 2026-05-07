@@ -20,7 +20,6 @@
             overflow-x: hidden;
         }
 
-        /* Matrix Arka Plan (Önceki görselden miras) */
         #matrix {
             position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.15;
         }
@@ -32,33 +31,32 @@
         }
         h1 { color: var(--primary-red); letter-spacing: 5px; text-transform: uppercase; margin: 0; font-size: 2.5em; }
 
-        /* Canlı Navigasyon Linkleri (Düzeltildi) */
         .nav { margin-bottom: 30px; display: flex; flex-wrap: wrap; gap: 10px; }
         .nav a {
             color: var(--text-color); text-decoration: none; border: 1px solid var(--dark-red);
             padding: 8px 15px; background: rgba(139, 0, 0, 0.1); transition: 0.3s;
-            font-size: 0.9em;
+            font-size: 0.9em; cursor: pointer;
         }
         .nav a:hover {
             background: var(--primary-red); color: #000; box-shadow: 0 0 15px var(--primary-red);
         }
 
-        /* Terminal (Kullanıcı Adı Düzenlendi) */
         .terminal-box {
             background: rgba(5, 5, 5, 0.9);
             border: 1px solid var(--dark-red);
             padding: 20px;
-            height: 140px;
+            height: 160px;
             margin-bottom: 20px;
             box-shadow: 0 0 20px rgba(0,0,0,1);
             font-size: 0.95em;
+            overflow-y: hidden;
         }
 
         .dashboard {
             display: grid; grid-template-columns: 2fr 1fr; gap: 20px;
         }
         .panel {
-            border: 1px solid var(--dark-red); background: rgba(10, 10, 10, 0.85);
+            border: 1px solid var(--dark-red); background: #000;
             position: relative; overflow: hidden;
         }
         .panel-header {
@@ -66,18 +64,13 @@
             font-size: 0.7em; letter-spacing: 2px; text-transform: uppercase;
         }
 
-        /* GÜNCELLENMİŞ: Dalga Paneli (Daha Küçük) */
         #data-pulse-panel {
-            height: 200px; /* EKG'den daha küçük yükseklik */
+            height: 220px;
             display: flex; flex-direction: column;
-            background: #000; /* HATA 2: Saf Siyah Arka Plan */
         }
         
-        /* GÜNCELLENMİŞ: GIF Konteyneri */
-        .wave-gif-container {
-            width: 100%; height: 100%;
-            display: flex; justify-content: center; align-items: center;
-            opacity: 0.9; /* Hafif transparanlık, elit dokunuş */
+        .wave-container {
+            flex: 1; width: 100%; position: relative;
         }
 
         .metric-label { font-size: 0.8em; margin-top: 10px; display: block; }
@@ -126,9 +119,8 @@
         <div class="dashboard">
             <div id="data-pulse-panel" class="panel">
                 <div class="panel-header">LIVE_DATA_STREAM // MULTI_PULSE_FEED</div>
-                <div class="wave-gif-container">
-                    <img id="wave-gif" style="max-height: 100%; max-width: 100%; mix-blend-mode: screen;" alt="Kırmızı Veri Dalga Akışı">
-                </div>
+                <div class="wave-container" id="waveBox">
+                    </div>
             </div>
 
             <div class="panel" style="padding: 20px;">
@@ -142,7 +134,7 @@
                 <div style="margin-top: 25px; font-size: 0.75em; color: #555; line-height: 1.8;">
                     <span style="color: var(--primary-red)">></span> VPN_TUNNEL: <span style="color: #0f0">SECURE</span><br>
                     <span style="color: var(--primary-red)">></span> FIREWALL: <span style="color: #0f0">ACTIVE</span><br>
-                    <span style="color: var(--primary-red)">></span> BOTNET: STANDBY
+                    <span style="color: var(--primary-red)">></span> ANOM_BOTNET: STANDBY
                 </div>
             </div>
         </div>
@@ -150,12 +142,12 @@
 
     <div class="ticker">
         <div class="ticker-wrap">
-            >>> SİSTEM DURUMU: OPERASYONEL -- YÜKLEME TAMAMLANDI -- VERİ AKIŞI AKTİF -- YENİ PROJE YAYINDA -- LOGLAR ŞİFRELENDİ...
+            >>> SİSTEM DURUMU: OPERASYONEL -- YÜKLEME TAMAMLANDI -- SİNYAL ANALİZİ AKTİF -- PROJELER GÜNCELLENDİ...
         </div>
     </div>
 
     <script>
-        // 1. Matrix Arka Plan (Miras)
+        // Matrix Arka Plan
         const mCanvas = document.getElementById('matrix');
         const mCtx = mCanvas.getContext('2d');
         function resizeMatrix() { mCanvas.width = window.innerWidth; mCanvas.height = window.innerHeight; }
@@ -171,15 +163,45 @@
             }
         }
 
-        // GÜNCELLENMİŞ: GIF Yükleme ve Ayarları
-        const waveGif = document.getElementById('wave-gif');
-        
-        // Buraya o fütüristik dalga formunun kırmızı/siyah GIF'inin linkini koy.
-        // Şimdilik yer tutucu olarak siber bir dalga formunun linkini veriyorum.
-        // Eğer kendi oluşturduğun bir GIF varsa linkini değiştirebilirsin.
-        waveGif.src = 'https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExcjkxdXlhcmgxMzZ4OWE2M24zOTZod3pyNXE0YWV4ZXJ4dWN4ZXJ4cyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3oKIPm0OdxF4a6i23K/giphy.gif'; 
+        // Dinamik Fütüristik Dalga (Senin çizdiğin zikzak modeli)
+        const waveBox = document.getElementById('waveBox');
+        const wCanvas = document.createElement('canvas');
+        const wCtx = wCanvas.getContext('2d');
+        waveBox.appendChild(wCanvas);
 
-        // Terminal Yazı Efekti (Genel Karşılama, Miras)
+        function resizeWave() {
+            wCanvas.width = waveBox.offsetWidth;
+            wCanvas.height = waveBox.offsetHeight;
+        }
+        window.addEventListener('resize', resizeWave); resizeWave();
+
+        let offset = 0;
+        function drawWave() {
+            wCtx.fillStyle = '#000';
+            wCtx.fillRect(0, 0, wCanvas.width, wCanvas.height);
+            
+            wCtx.strokeStyle = 'rgba(255, 0, 0, 0.8)';
+            wCtx.lineWidth = 2;
+            wCtx.shadowBlur = 10;
+            wCtx.shadowColor = 'red';
+            
+            wCtx.beginPath();
+            for (let x = 0; x < wCanvas.width; x++) {
+                // Karmaşık dalga denklemi (Zikzak ve yumuşak geçiş karışımı)
+                const y = wCanvas.height/2 + 
+                          Math.sin(x * 0.02 + offset) * 30 + 
+                          Math.sin(x * 0.05 + offset * 1.5) * 15 +
+                          (Math.random() * 2); // Hafif karıncalanma
+                if (x === 0) wCtx.moveTo(x, y); else wCtx.lineTo(x, y);
+            }
+            wCtx.stroke();
+            wCtx.shadowBlur = 0; // Gölgeyi sıfırla (Performans için)
+            
+            offset += 0.08;
+            requestAnimationFrame(drawWave);
+        }
+
+        // Terminal Yazı Efekti
         const termText = "./initialize_lab.py\n> Mounting core systems... [OK]\n> Encrypting terminal session... [OK]\n> Welcome to ANOMcompany Laboratory.\n> ACCESS: OPERATOR.";
         let idx = 0;
         function typeWriter() {
@@ -196,9 +218,9 @@
             }
         }
 
-        // Başlat
         window.onload = () => {
             setInterval(drawMatrix, 50);
+            drawWave();
             setTimeout(typeWriter, 800);
         };
     </script>
