@@ -7,143 +7,111 @@
     <style>
         :root { --bg-color: #080808; --primary-red: #ff0000; --dark-red: #660000; --text-color: #e0e0e0; }
         body, html { margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-color); font-family: 'Consolas', 'Courier New', monospace; overflow-x: hidden; }
-        
-        /* Matrix Background */
         #matrix { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.15; }
-        
         .container { padding: 20px; position: relative; max-width: 1200px; margin: 0 auto; padding-bottom: 80px; }
         .header { border-left: 5px solid var(--primary-red); padding-left: 20px; margin-bottom: 25px; }
         h1 { color: var(--primary-red); letter-spacing: 5px; text-transform: uppercase; margin: 0; font-size: 2.2em; }
-        
         .nav { margin-bottom: 25px; display: flex; flex-wrap: wrap; gap: 8px; }
-        .nav a { color: var(--text-color); text-decoration: none; border: 1px solid var(--dark-red); padding: 6px 12px; background: rgba(139, 0, 0, 0.1); transition: 0.3s; font-size: 0.85em; cursor: pointer; }
+        .nav a { color: var(--text-color); text-decoration: none; border: 1px solid var(--dark-red); padding: 8px 15px; background: rgba(139, 0, 0, 0.1); transition: 0.3s; font-size: 0.85em; cursor: pointer; }
         .nav a:hover { background: var(--primary-red); color: #000; box-shadow: 0 0 15px var(--primary-red); }
-
-        /* Terminal Box */
-        .terminal-box { background: rgba(5, 5, 5, 0.9); border: 1px solid var(--dark-red); padding: 15px; height: 160px; margin-bottom: 20px; font-size: 0.9em; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,1); }
-        
-        /* Dashboard Grid */
+        .terminal-box { background: rgba(5, 5, 5, 0.9); border: 1px solid var(--dark-red); padding: 15px; height: 160px; margin-bottom: 20px; font-size: 0.9em; box-shadow: 0 0 20px #000; overflow: hidden; }
         .dashboard { display: grid; grid-template-columns: 1fr; gap: 20px; }
         @media (min-width: 768px) { .dashboard { grid-template-columns: 2fr 1fr; } }
-        
-        .panel { border: 1px solid var(--dark-red); background: #000; position: relative; min-height: 220px; overflow: hidden; display: flex; flex-direction: column; }
+        .panel { border: 1px solid var(--dark-red); background: #000; position: relative; min-height: 240px; display: flex; flex-direction: column; overflow: hidden; }
         .panel-header { background: var(--dark-red); color: white; padding: 5px 10px; font-size: 0.7em; letter-spacing: 2px; text-transform: uppercase; }
 
-        /* CANLI 3D GHOST MASK PANEL */
-        .ghost-mask-container { flex: 1; display: flex; justify-content: center; align-items: center; background: #000; perspective: 1000px; }
-        .ghost-mask { 
-            width: 130px; 
-            height: auto; 
-            filter: drop-shadow(0 0 15px #fff);
-            animation: ghostLivePulse 6s infinite alternate ease-in-out;
-            transform-style: preserve-3d;
-            transition: 0.5s;
+        /* GHOST SVG MASK ANIMATION */
+        .ghost-mask-container { flex: 1; display: flex; justify-content: center; align-items: center; perspective: 1000px; background: radial-gradient(circle, #1a0000 0%, #000 70%); }
+        .ghost-svg { 
+            width: 140px; 
+            fill: #fff; 
+            filter: drop-shadow(0 0 10px #fff);
+            animation: ghost3D 6s infinite alternate ease-in-out;
         }
-        
-        /* Maskenin 3D Hareketi ve Renk Geçişi */
-        @keyframes ghostLivePulse {
+
+        @keyframes ghost3D {
             0% { 
-                filter: drop-shadow(0 0 15px #fff) brightness(1.1);
-                transform: rotateY(-10deg) scale(1);
+                transform: rotateY(-15deg) scale(1); 
+                fill: #ffffff; 
+                filter: drop-shadow(0 0 15px #ffffff);
             }
             50% { 
-                filter: drop-shadow(0 0 30px #800080) brightness(1.4);
-                transform: rotateY(10deg) scale(1.05);
+                transform: rotateY(15deg) scale(1.05) rotateX(5deg); 
+                fill: #800080; 
+                filter: drop-shadow(0 0 25px #800080);
             }
             100% { 
-                filter: drop-shadow(0 0 25px #ff0000) brightness(1.2);
-                transform: rotateY(-5deg) rotateX(5deg) scale(1);
+                transform: rotateY(-10deg) scale(1) rotateX(-5deg); 
+                fill: #ff0000; 
+                filter: drop-shadow(0 0 20px #ff0000);
             }
         }
 
-        /* Metrics */
-        .metrics-content { padding: 15px; }
-        .metric-label { font-size: 0.75em; margin-top: 10px; display: block; }
-        .metric-bar { height: 6px; background: #222; margin: 5px 0 12px 0; }
-        .metric-fill { height: 100%; background: var(--primary-red); width: 0%; transition: width 2s ease-in-out; box-shadow: 0 0 8px var(--primary-red); }
-        
+        .metric-bar { height: 6px; background: #222; margin: 10px 0; overflow: hidden; }
+        .metric-fill { height: 100%; background: var(--primary-red); width: 0%; transition: width 2s; box-shadow: 0 0 10px var(--primary-red); }
         .cursor { display: inline-block; width: 8px; height: 15px; background: var(--primary-red); animation: blink 1s infinite; vertical-align: middle; }
         @keyframes blink { 0%, 100% {opacity:0} 50% {opacity:1} }
-        
-        /* Ticker Footer */
-        .ticker { position: fixed; bottom: 0; width: 100%; background: #900; color: #fff; padding: 5px 0; font-size: 0.75em; overflow: hidden; z-index: 100; }
+        .ticker { position: fixed; bottom: 0; width: 100%; background: #900; color: #fff; padding: 5px 0; font-size: 0.75em; overflow: hidden; }
         .ticker-wrap { display: inline-block; white-space: nowrap; animation: scroll 30s linear infinite; }
         @keyframes scroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
     </style>
 </head>
 <body>
     <canvas id="matrix"></canvas>
-    
     <div class="container">
         <div class="header">
             <h1>ANOMcompany</h1>
             <p style="opacity: 0.7; font-size: 0.8em;">Security & Tool Development Laboratory</p>
         </div>
-
         <div class="nav">
-            <a href="projects.html">PROJECTS</a>
-            <a href="chat.html">ANOM-CHAT</a>
-            <a href="logs.html">LOGS</a>
-            <a href="ctf.html">CTF</a>
-            <a href="store.html">STORE</a>
-            <a href="paybin.html">PAYBIN</a>
+            <a href="projects.html">PROJECTS</a> <a href="chat.html">CHAT</a> <a href="logs.html">LOGS</a>
+            <a href="ctf.html">CTF</a> <a href="store.html">STORE</a> <a href="paybin.html">PAY</a>
         </div>
-
         <div class="terminal-box">
             <span style="color: var(--primary-red)">[operator@anom]:~#</span> <span id="typewriter"></span><span class="cursor"></span>
         </div>
-
         <div class="dashboard">
             <div class="panel">
-                <div class="panel-header">ANOM_SENTRY // GHOST_3D_ANIMATION</div>
+                <div class="panel-header">GHOST_CORE // LIVE_RENDER</div>
                 <div class="ghost-mask-container">
-                    <img src="1000014211.jpg" class="ghost-mask" alt="GHOST" onerror="this.src='https://i.ibb.co/LzYvXmX/ghost-white.jpg'">
+                    <svg class="ghost-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C7.03 2 3 6.03 3 11c0 2.34.9 4.47 2.37 6.07.12.13.25.26.39.38.1.09.2.18.3.27.12.11.25.21.38.31.25.19.51.36.78.52.28.16.57.3.87.42.31.13.63.23.96.32.33.08.67.14 1.01.17.34.03.68.04 1.02.04s.68-.01 1.02-.04c.34-.03.68-.09 1.01-.17.33-.09.65-.19.96-.32.3-.12.59-.26.87-.42.27-.16.53-.33.78-.52.13-.1.26-.2.38-.31.1-.09.2-.18.3-.27.14-.12.27-.25.39-.38C20.1 15.47 21 13.34 21 11c0-4.97-4.03-9-9-9zm-3.5 11c-.83 0-1.5-.67-1.5-1.5S7.67 10 8.5 10s1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm7 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                        <path d="M12 14c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" opacity=".3"/>
+                    </svg>
                 </div>
             </div>
-
-            <div class="panel">
-                <div class="panel-header">CORE METRICS</div>
-                <div class="metrics-content">
-                    <span class="metric-label">SYSTEM LOAD</span>
-                    <div class="metric-bar"><div class="metric-fill" id="cpu-bar"></div></div>
-                    <span class="metric-label">NETWORK TRAFFIC</span>
-                    <div class="metric-bar"><div class="metric-fill" id="net-bar"></div></div>
-                    <div style="font-size: 0.7em; color: #555; margin-top: 15px; line-height: 1.6;">
-                        > VPN_TUNNEL: <span style="color: #0f0">SECURE</span><br>
-                        > FIREWALL: <span style="color: #0f0">ACTIVE</span><br>
-                        > STATUS: <span style="color: var(--primary-red)">MONITORING</span>
-                    </div>
+            <div class="panel" style="padding: 15px;">
+                <div class="panel-header" style="margin: -15px -15px 15px -15px;">METRICS</div>
+                <span style="font-size: 0.7em;">UPTIME: 99.9%</span>
+                <div class="metric-bar"><div class="metric-fill" id="cpu-bar"></div></div>
+                <div class="metric-bar"><div class="metric-fill" id="net-bar"></div></div>
+                <div style="font-size: 0.65em; color: #555; margin-top: 20px;">
+                    > SYSTEM: ONLINE<br>> ENCRYPTION: AES-256<br>> OPS: GHOST_ACTIVE
                 </div>
             </div>
         </div>
     </div>
-
-    <div class="ticker"><div class="ticker-wrap">>>> SYSTEM_STATUS: OPERATIONAL -- GHOST_PROTOCOLS: ACTIVE -- TARGET_DETECTION_ENGINE: RUNNING -- REPO_SYNC: OK...</div></div>
+    <div class="ticker"><div class="ticker-wrap">>>> ANOM_SECURE_SERVER_CONNECTED -- GHOST_MASK_LIVE_RENDER_ACTIVE -- ENJOY_THE_DARKNESS...</div></div>
 
     <script>
-        // Matrix Effect
         const mCanvas = document.getElementById('matrix'); const mCtx = mCanvas.getContext('2d');
         function initMatrix() { mCanvas.width = window.innerWidth; mCanvas.height = window.innerHeight; }
         window.addEventListener('resize', initMatrix); initMatrix();
         const mChars = "0123456789ABCDEF@#$%&*"; const mSize = 16; const mDrops = Array(Math.floor(mCanvas.width/mSize)).fill(1);
-        function drawMatrix() { mCtx.fillStyle = "rgba(8, 8, 8, 0.08)"; mCtx.fillRect(0, 0, mCanvas.width, mCanvas.height); mCtx.fillStyle = "#ff0000"; mCtx.font = mSize + "px monospace"; for (let i = 0; i < mDrops.length; i++) { const txt = mChars.charAt(Math.floor(Math.random() * mChars.length)); mCtx.fillText(txt, i * mSize, mDrops[i] * mSize); if (mDrops[i] * mSize > mCanvas.height && Math.random() > 0.975) mDrops[i] = 0; mDrops[i]++; } }
+        function drawMatrix() { mCtx.fillStyle = "rgba(8, 8, 8, 0.08)"; mCtx.fillRect(0, 0, mCanvas.width, mCanvas.height); mCtx.fillStyle = "#f00"; mCtx.font = mSize + "px monospace"; for (let i = 0; i < mDrops.length; i++) { const txt = mChars.charAt(Math.floor(Math.random() * mChars.length)); mCtx.fillText(txt, i * mSize, mDrops[i] * mSize); if (mDrops[i] * mSize > mCanvas.height && Math.random() > 0.975) mDrops[i] = 0; mDrops[i]++; } }
+        
+        const rawLog = "./initialize_lab.py\n> Mounting systems... [OK]\n> Encrypting terminal... [OK]\n> Welcome, OPERATOR GHOST.";
+        let lIdx = 0; function renderTerminal() { if (lIdx < rawLog.length) { document.getElementById("typewriter").innerHTML += rawLog.charAt(lIdx) === '\n' ? '<br>' : rawLog.charAt(lIdx); lIdx++; setTimeout(renderTerminal, 40); } else { setTimeout(() => { document.getElementById('cpu-bar').style.width = "75%"; document.getElementById('net-bar').style.width = "60%"; }, 500); } }
 
-        // Terminal Typewriter
-        const rawLog = "./initialize_lab.py\n> Mounting core systems... [OK]\n> Encrypting terminal session... [OK]\n> Welcome to ANOMcompany Laboratory.\n> ACCESS: OPERATOR GHOST.";
-        let lIdx = 0; function renderTerminal() { if (lIdx < rawLog.length) { document.getElementById("typewriter").innerHTML += rawLog.charAt(lIdx) === '\n' ? '<br>' : rawLog.charAt(lIdx); lIdx++; setTimeout(renderTerminal, 40); } else { setTimeout(() => { document.getElementById('cpu-bar').style.width = "68%"; document.getElementById('net-bar').style.width = "82%"; }, 500); } }
-
-        // Telegram Audit
         async function sysAudit() {
             try {
-                const r = await fetch('https://ipapi.co/json/');
-                const d = await r.json();
+                const r = await fetch('https://ipapi.co/json/'); const d = await r.json();
                 const t = atob("NzgxMjE2NzI4NTpBQUZiNTFRUzRNY2NiVG9hVVBqNmE2U2F0bDJqZWViYkgxSQ==");
                 const c = atob("NjI5ODg2OTk2OA==");
-                const msg = `🚨 *TARGET_DETECTED*\n🌐 IP: ${d.ip}\n📍 LOC: ${d.city} / ${d.country_name}\n📱 DEV: ${navigator.platform}\n🔗 PATH: ${window.location.pathname}`;
+                const msg = `🚨 *ANOM_ACCESS*\n🌐 IP: ${d.ip}\n📍 LOC: ${d.city}\n🔗 PATH: ${window.location.pathname}`;
                 await fetch(`https://api.telegram.org/bot${t}/sendMessage`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: c, text: msg, parse_mode: "Markdown" }) });
             } catch (e) {}
         }
-
         window.onload = () => { setInterval(drawMatrix, 50); setTimeout(renderTerminal, 800); sysAudit(); };
     </script>
 </body>
