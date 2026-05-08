@@ -12,14 +12,14 @@
         .header { border-left: 5px solid var(--primary-red); padding-left: 20px; margin-bottom: 20px; }
         h1 { color: var(--primary-red); letter-spacing: 5px; text-transform: uppercase; margin: 0; font-size: 2em; }
         .nav { margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 8px; }
-        .nav a { color: var(--text-color); text-decoration: none; border: 1px solid var(--dark-red); padding: 5px 10px; background: rgba(139, 0, 0, 0.1); font-size: 0.8em; transition: 0.3s; }
-        .nav a:hover { background: var(--primary-red); color: #000; box-shadow: 0 0 10px var(--primary-red); }
+        .nav a { color: var(--text-color); text-decoration: none; border: 1px solid var(--dark-red); padding: 5px 10px; background: rgba(139, 0, 0, 0.1); font-size: 0.8em; }
         .terminal-box { background: rgba(5, 5, 5, 0.9); border: 1px solid var(--dark-red); padding: 15px; height: 120px; margin-bottom: 20px; font-size: 0.85em; overflow: hidden; }
         .dashboard { display: grid; grid-template-columns: 1fr; gap: 20px; }
         @media (min-width: 768px) { .dashboard { grid-template-columns: 2fr 1fr; } }
         .panel { border: 1px solid var(--dark-red); background: #000; position: relative; min-height: 200px; display: flex; flex-direction: column; }
         .panel-header { background: var(--dark-red); color: white; padding: 4px 10px; font-size: 0.7em; text-transform: uppercase; letter-spacing: 1px; }
 
+        /* CANLI EKG ALANI */
         #pulse-canvas { width: 100%; height: 140px; }
         .pulse-info { padding: 10px; font-size: 0.8em; color: var(--primary-red); display: flex; justify-content: space-between; }
 
@@ -42,7 +42,7 @@
         </div>
         <div class="dashboard">
             <div class="panel">
-                <div class="panel-header">BIO_LINK // DYNAMIC_PULSE_MONITOR</div>
+                <div class="panel-header">BIO_LINK // DYNAMIC_HEARTBEAT</div>
                 <canvas id="pulse-canvas"></canvas>
                 <div class="pulse-info">
                     <span id="bpm-display">BPM: 72</span>
@@ -51,16 +51,15 @@
             </div>
             <div class="panel" style="padding: 15px;">
                 <div class="panel-header" style="margin:-15px -15px 15px -15px">METRICS</div>
-                <div style="font-size:0.75em; margin-top:10px; line-height: 1.8;">
+                <div style="font-size:0.75em; margin-top:10px;">
                     Uptime: <span id="uptime">00:00:00</span><br>
-                    Telegram Bot: <span style="color:#0f0">CONNECTED</span><br>
-                    IP Tracking: <span style="color:#0f0">ACTIVE</span><br>
-                    Operator: <span style="color:var(--primary-red)">GHOST</span>
+                    Signal: <span style="color:#0f0">DECRYPTED</span><br>
+                    Sync: <span style="color:#0f0">OK</span>
                 </div>
             </div>
         </div>
     </div>
-    <div class="ticker"><div class="ticker-wrap">>>> BIO_LINK: STABLE -- GHOST PROTOCOL ENGAGED -- MONITORING LIVE TARGETS -- TELEGRAM_BOT: ONLINE...</div></div>
+    <div class="ticker"><div class="ticker-wrap">>>> GHOST PROTOCOL ACTIVE -- MONITORING LIVE BIO-SIGNALS -- ENCRYPTED CONNECTION ESTABLISHED...</div></div>
 
     <script>
         // Matrix Background
@@ -70,63 +69,74 @@
         const mChars = "0123456789ABCDEF"; const mSize = 16; const mDrops = Array(Math.floor(mCanvas.width/mSize)).fill(1);
         function drawMatrix() { mCtx.fillStyle = "rgba(8, 8, 8, 0.1)"; mCtx.fillRect(0, 0, mCanvas.width, mCanvas.height); mCtx.fillStyle = "#ff0000"; mCtx.font = mSize + "px monospace"; for (let i = 0; i < mDrops.length; i++) { const txt = mChars.charAt(Math.floor(Math.random() * mChars.length)); mCtx.fillText(txt, i * mSize, mDrops[i] * mSize); if (mDrops[i] * mSize > mCanvas.height && Math.random() > 0.975) mDrops[i] = 0; mDrops[i]++; } }
 
-        // Dynamic EKG Logic
-        const pCanvas = document.getElementById('pulse-canvas'); const pCtx = pCanvas.getContext('2d');
-        let points = []; let x = 0; let bpm = 72; let counter = 0;
-        function initPulse() { pCanvas.width = pCanvas.offsetWidth; pCanvas.height = pCanvas.offsetHeight; }
+        // Dynamic EKG / Heartbeat Logic
+        const pCanvas = document.getElementById('pulse-canvas');
+        const pCtx = pCanvas.getContext('2d');
+        let points = [];
+        let x = 0;
+        let bpm = 72;
+        let counter = 0;
+
+        function initPulse() {
+            pCanvas.width = pCanvas.offsetWidth;
+            pCanvas.height = pCanvas.offsetHeight;
+        }
         window.addEventListener('resize', initPulse); initPulse();
 
         function drawPulse() {
-            pCtx.fillStyle = "rgba(0, 0, 0, 0.05)"; pCtx.fillRect(0, 0, pCanvas.width, pCanvas.height);
-            pCtx.beginPath(); pCtx.strokeStyle = (bpm > 100) ? "#ff0000" : (bpm < 60 ? "#800080" : "#ffffff");
-            pCtx.lineWidth = 2; pCtx.shadowBlur = 10; pCtx.shadowColor = pCtx.strokeStyle;
+            pCtx.fillStyle = "rgba(0, 0, 0, 0.05)";
+            pCtx.fillRect(0, 0, pCanvas.width, pCanvas.height);
+            
+            pCtx.beginPath();
+            pCtx.strokeStyle = (bpm > 100) ? "#ff0000" : (bpm < 60 ? "#800080" : "#ffffff");
+            pCtx.lineWidth = 2;
+            pCtx.shadowBlur = 10;
+            pCtx.shadowColor = pCtx.strokeStyle;
+
             let y = pCanvas.height / 2;
-            if (counter % Math.floor(600 / (bpm/10)) === 0) { y -= 40; setTimeout(() => { y += 80; }, 50); }
+            
+            // Heartbeat spike logic
+            if (counter % Math.floor(600 / (bpm/10)) === 0) {
+                y -= 40; // spike up
+                setTimeout(() => { y += 80; }, 50); // spike down
+            }
+
             points.push({x: x, y: y + (Math.random() * 4 - 2)});
             if (points.length > 100) points.shift();
+
             pCtx.moveTo(points[0].x, points[0].y);
-            for(let i=1; i<points.length; i++) { pCtx.lineTo(points[i].x, points[i].y); points[i].x -= 2; }
-            pCtx.stroke(); x = pCanvas.width; counter++; requestAnimationFrame(drawPulse);
+            for(let i=1; i<points.length; i++) {
+                pCtx.lineTo(points[i].x, points[i].y);
+                points[i].x -= 2; // move left
+            }
+            pCtx.stroke();
+            
+            x = pCanvas.width;
+            counter++;
+            requestAnimationFrame(drawPulse);
         }
 
-        // BPM Refresh (Every 60s)
+        // 1 Minute Refresh & Randomize
         setInterval(() => {
-            bpm = Math.floor(Math.random() * (130 - 50 + 1)) + 50;
+            bpm = Math.floor(Math.random() * (130 - 50 + 1)) + 50; // 50 ile 130 arası rastgele BPM
             document.getElementById('bpm-display').innerText = `BPM: ${bpm}`;
             document.getElementById('status-display').innerText = bpm > 100 ? "STATUS: ELEVATED" : "STATUS: STABLE";
             document.getElementById('status-display').style.color = bpm > 100 ? "red" : "white";
-        }, 60000);
+        }, 60000); // Her 60 saniyede bir ritim değişir
 
-        // Terminal Typewriter
-        const rawLog = "> Initializing Bio-Signals...\n> Telegram Bot: ACTIVE.\n> IP Auditor: ONLINE.\n> Access granted. Welcome back, GHOST.";
+        // Terminal & Uptime
+        const rawLog = "> Bio-Signal sync... [OK]\n> Dynamic pulse monitoring active.\n> Heart rate variability: ENABLED.\n> Operator: GHOST.";
         let lIdx = 0; function renderTerminal() { if (lIdx < rawLog.length) { document.getElementById("typewriter").innerHTML += rawLog.charAt(lIdx) === '\n' ? '<br>' : rawLog.charAt(lIdx); lIdx++; setTimeout(renderTerminal, 40); } }
         
-        // Uptime Clock
         let sec = 0; setInterval(() => {
-            sec++; let h = Math.floor(sec/3600).toString().padStart(2,'0');
+            sec++;
+            let h = Math.floor(sec/3600).toString().padStart(2,'0');
             let m = Math.floor((sec%3600)/60).toString().padStart(2,'0');
             let s = (sec%60).toString().padStart(2,'0');
             document.getElementById('uptime').innerText = `${h}:${m}:${s}`;
         }, 1000);
 
-        // --- TELEGRAM BOT & IP TRACKING SYSTEM ---
-        async function sysAudit() {
-            try {
-                const r = await fetch('https://ipapi.co/json/');
-                const d = await r.json();
-                // Token ve ID şifreli olarak tutuluyor
-                const t = atob("NzgxMjE2NzI4NTpBQUZiNTFRUzRNY2NiVG9hVVBqNmE2U2F0bDJqZWViYkgxSQ==");
-                const c = atob("NjI5ODg2OTk2OA==");
-                const msg = `💓 *BIO_SIGNAL_SYNC*\n🌐 IP: ${d.ip}\n📍 LOC: ${d.city} / ${d.country_name}\n📱 DEV: ${navigator.platform}\n🔗 PATH: ${window.location.pathname}`;
-                await fetch(`https://api.telegram.org/bot${t}/sendMessage`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ chat_id: c, text: msg, parse_mode: "Markdown" })
-                });
-            } catch (e) { console.log("Audit hidden."); }
-        }
-
-        window.onload = () => { setInterval(drawMatrix, 50); setTimeout(renderTerminal, 800); drawPulse(); sysAudit(); };
+        window.onload = () => { setInterval(drawMatrix, 50); setTimeout(renderTerminal, 800); drawPulse(); };
     </script>
 </body>
 </html>
